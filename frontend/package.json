@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/moment": "^2.13.0",
     "axios": "^0.27.2",
+    "jquery": "^3.6.0",
     "moment": "^2.29.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -18,10 +19,10 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/jquery": "^3.5.14",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@types/react-router-dom": "^5.3.3",
-
     "@types/styletron-engine-atomic": "^1.1.1",
     "@types/styletron-react": "^5.0.3",
     "@types/styletron-standard": "^2.0.2",

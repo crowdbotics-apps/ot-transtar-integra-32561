@@ -1,5 +1,5 @@
 import { styled, useStyletron } from "baseui";
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { DatePicker } from "baseui/datepicker";
 import moment from "moment";
 interface TextProps {
@@ -38,8 +38,8 @@ export const addSpace = (
   );
 };
 
-export const StyledHeaderText = styled<TextProps, any>("h1", ({ size }) => ({
-  color: "white",
+export const StyledHeaderText = styled<TextProps, any>("h1", ({ size, color }) => ({
+  color: color || "white" ,
   fontSize: size || "38px",
   letterSpacing: "1px",
   fontWeight: 700,
@@ -70,13 +70,14 @@ export const StyledDarkParagraphText = styled<TextProps, any>(
 );
 
 export const StyledInput = styled("input", () => ({
+  boxSizing: "border-box",
   width: "100%",
   height: "40px",
   background: "rgba(248, 248, 248, 1)",
   "::placeholder": {
     color: "rgba(176, 176, 176, .6)",
     fontSize: "13px",
-    fontWeight: "300",
+    fontWeight: 300,
   },
   border: "1px solid rgba(139, 139, 139, 1)",
   padding: "15px",
@@ -86,12 +87,16 @@ export const StyledInput = styled("input", () => ({
 export const StyledCustomSelect: React.FC<{
   placeholder: string;
   options: string[];
-}> = ({ placeholder, options }) => {
+  onSelect: (e: ChangeEvent<HTMLInputElement>) => void;
+  name: string
+}> = ({ placeholder, options, onSelect, name }) => {
   const [css] = useStyletron();
   const [value, setValue] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const inputRef = useRef(null);
   const inputStyle = css({
-    background: "#fff",
+    background: "#fff !important",
+    outline: 'none',
     "::placeholder": {
       color: "rgba(176, 176, 176, 1)",
     },
@@ -103,8 +108,10 @@ export const StyledCustomSelect: React.FC<{
     <div
       className={css({
         width: "100%",
-        height: "40px",
+        height: "fit-content",
         position: "relative",
+              gridArea: "input",
+
       })}
     >
       <div
@@ -112,17 +119,20 @@ export const StyledCustomSelect: React.FC<{
           position: "relative",
           width: "100%",
           height: "fit-content",
+          
         })}
         onClick={(e) => {
-          setOptionsOpen(!setOptionsOpen);
+          setOptionsOpen(!optionsOpen);
           console.log("clicked");
         }}
       >
         <StyledInput
+          ref={inputRef}
           className={inputStyle}
           readOnly
           value={value}
           placeholder={placeholder}
+          name={name}
         />
         <svg
           width="9"
@@ -133,7 +143,7 @@ export const StyledCustomSelect: React.FC<{
           style={{
             position: "absolute",
             top: "50%",
-            right: "10%",
+            right: "7%",
             transform: "translateY(-50%)",
           }}
         >
@@ -143,36 +153,63 @@ export const StyledCustomSelect: React.FC<{
           />
         </svg>
       </div>
-      {/* {optionsOpen && ( */}
+{/**handle clickaway */}
+     {optionsOpen && <div onClick={() => setOptionsOpen(false)} className={ css({position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0, 0, 0, .02)', zIndex: 2})}/>}
+
       <div
         className={css({
           position: "absolute",
           bottom: "0",
-          // transform: "translateY(50%)",
+          transform: "translateY(calc(100% - 12px))",
           left: 0,
           height: "fit-content",
           width: "100%",
-          display: !optionsOpen ? "flex" : "none",
+          display: optionsOpen ? "flex" : "none",
           flexFlow: "column",
+          border: "1px solid rgba(139, 139, 139, 1)",
+        zIndex: 2
+          
+
         })}
       >
         {options.map((opt) => (
           <StyledInput
             onClick={() => {
-              setValue(opt);
+              setValue(opt)
+            onSelect({target: {name, value: opt}} as any)
+
               setOptionsOpen(false);
             }}
             readOnly
             value={opt}
-            className={inputStyle}
-            style={{ margin: 0 }}
+            className={inputStyle + ' ' +  css({
+              border: 'none',
+              outline: 'none',
+              margin: 0, 
+              ':not(:last-child)': {
+                borderBottom: "1px solid rgba(139, 139, 139, 1)",
+              },
+              ':hover': {
+                background: "rgba(241, 241, 241, 1)"
+              },
+              ...(value === opt && {background: 'rgba(241, 241, 241, 1) !important'})
+            })}
           />
         ))}
       </div>
       {/* )} */}
     </div>
   );
-};
+  };
+
+
+export const StyledCheckbox: React.FC<{checked: boolean, onChange: (e: ChangeEvent<HTMLInputElement>) => void}> = ({checked, onChange}) => {
+    const [ css ] = useStyletron();
+  return <input type="checkbox" checked={checked} onChange={onChange} className={css({
+      width: '20px',
+      height: '20px'
+    })}/>
+  }
 
 export const StyledDateInput: React.FC<{ placeholder: string }> = ({
   placeholder,

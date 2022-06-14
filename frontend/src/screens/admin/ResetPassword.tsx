@@ -3,7 +3,7 @@ import {
   Wrapper,
   Overlay,
 } from "../client/Verification/VerificationScreen.style";
-import ResetPasswordForm from "../../components/Forms/admin/PasswordReset.form";
+import ResetPasswordForm from "../../components/Forms/common/PasswordReset.form";
 import { useStyletron } from "baseui";
 import { StyledHeaderText, StyledParagraphText } from "../../components";
 

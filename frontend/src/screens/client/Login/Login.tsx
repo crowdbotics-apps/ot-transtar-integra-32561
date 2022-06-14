@@ -1,5 +1,5 @@
 import { Wrapper, Overlay } from "../Verification/VerificationScreen.style";
-import LoginForm from "../../../components/Forms/admin/Login.form";
+import LoginForm from "../../../components/Forms/common/Login.form";
 import { useStyletron } from "baseui";
 import { StyledHeaderText, StyledParagraphText } from "../../../components";
 type Props = {};

@@ -1,40 +1,41 @@
-import React, { MouseEvent } from "react";
-import { ModalWrapper, Overlay } from "./Modals.style";
-import { useStyletron } from "baseui";
-import formLogo from "../../assets/form_logo.svg";
-import { ArrowForward, ArrowBack } from "../svgs/arrows";
+import React, { MouseEvent } from "react"
+import { ModalWrapper, Overlay } from "./Modals.style"
+import { useStyletron } from "baseui"
+import formLogo from "../../assets/form_logo.svg"
+import { ArrowForward, ArrowBack } from "../svgs/arrows"
 import {
   StyledParagraphText,
   StyledButton,
   StyledDarkParagraphText,
   addSpace,
   StyledHeaderText,
-  StyledDateInput,
-} from "../index";
-import { InputData } from "../Forms/client/ClientVerification.form";
+  StyledDateInput
+} from "../index"
+import { Data } from "../Forms/broker/Registration/Registration.form"
+import { InputData } from "../Forms/client/ClientVerification.form"
 type Props = {
-  children: React.ReactNode;
-  showCloseIcon?: boolean;
-  small?: boolean;
-  large?: boolean;
-  closeModal?: () => void;
-  open: boolean;
-};
+  children: React.ReactNode,
+  showCloseIcon?: boolean,
+  small?: boolean,
+  large?: boolean,
+  closeModal?: () => void,
+  open: boolean
+}
 
 const getInputDisplayName = (input: string) => {
   switch (input) {
     case "full_name":
-      return "Full Name";
+      return "Full Name"
     case "postal":
-      return "Postal / ZIP Code";
+      return "Postal / ZIP Code"
     case "holder_id":
-      return "Holder ID";
+      return "Holder ID"
     case "email":
-      return "Email Address";
+      return "Email Address"
     case "sin_or_tin":
-      return "SIN Or TIN";
+      return "SIN Or TIN"
   }
-};
+}
 
 export const BaseModal = ({
   children,
@@ -42,14 +43,15 @@ export const BaseModal = ({
   small,
   large,
   closeModal,
-  open,
+  open
 }: Props) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <div
       className={css({
         width: "100vw",
         height: "100vh",
+        overflowY: "scroll",
         position: "fixed",
         top: 0,
         left: 0,
@@ -59,7 +61,7 @@ export const BaseModal = ({
         backgroundColor: "rgba(14, 41, 75, 0.9)",
         zIndex: 20,
         ...(!open && { transform: "translateY(-100vh)" }),
-        transition: "all 0.2s ease",
+        transition: "all 0.2s ease"
       })}
     >
       <ModalWrapper small={!!small} large={!!large}>
@@ -77,8 +79,8 @@ export const BaseModal = ({
               cursor: "pointer",
               opacity: 0.8,
               ":hover": {
-                opacity: 1,
-              },
+                opacity: 1
+              }
             })}
             onClick={closeModal}
           >
@@ -102,17 +104,17 @@ export const BaseModal = ({
         {children}
       </ModalWrapper>
     </div>
-  );
-};
+  )
+}
 
 export const ReviewInfoModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
-  submit: (e: MouseEvent<HTMLButtonElement>) => void;
-  inputData: { key: string; value: string }[];
+  closeModal?: () => void,
+  open: boolean,
+  submit: (e: MouseEvent<HTMLButtonElement>) => void,
+  inputData: { key: string, value: string }[]
 }> = ({ inputData, closeModal, open, submit }) => {
-  const [css] = useStyletron();
-  console.log("input data", inputData);
+  const [css] = useStyletron()
+  console.log("input data", inputData)
   return (
     <BaseModal open={open} closeModal={closeModal}>
       <StyledParagraphText
@@ -121,7 +123,7 @@ export const ReviewInfoModal: React.FC<{
           fontWeight: 600,
           fontSize: "20px",
           letterSpacing: ".5px",
-          lineHeight: 1.5,
+          lineHeight: 1.5
         }}
       >
         Please review the information you have provided for accuracy:
@@ -140,21 +142,21 @@ export const ReviewInfoModal: React.FC<{
                 lineHeight: "18px",
                 color: "#000",
                 ":not(:last-child)": {
-                  borderBottom: "1px solid rgba(209, 208, 208, 1)",
-                },
+                  borderBottom: "1px solid rgba(209, 208, 208, 1)"
+                }
               })}
             >
               {getInputDisplayName(input.key)}: {"  "}
               <span
                 style={{
                   fontWeight: 500,
-                  textTransform: "capitalize",
+                  textTransform: "capitalize"
                 }}
               >
                 {input.value}
               </span>
             </div>
-          ) : null;
+          ) : null
         })}
       </div>
       <div
@@ -163,7 +165,7 @@ export const ReviewInfoModal: React.FC<{
           alignItems: "center",
           justifyContent: "space-evenly",
           width: "100%",
-          gap: "10px",
+          gap: "10px"
         })}
       >
         <StyledButton
@@ -175,11 +177,11 @@ export const ReviewInfoModal: React.FC<{
             backgroundColor: "transparent",
             color: "rgba(14, 41, 75, 1)",
             fontWeight: 500,
-            fontSize: "14px",
+            fontSize: "14px"
           }}
-          onClick={(e) => {
-            e.preventDefault();
-            closeModal?.();
+          onClick={e => {
+            e.preventDefault()
+            closeModal?.()
           }}
         >
           <ArrowBack fill="#0E294B" className={css({ margin: "0 10px" })} />
@@ -192,7 +194,7 @@ export const ReviewInfoModal: React.FC<{
             justifyContent: "center",
             flex: 2,
             fontWeight: 500,
-            fontSize: "14px",
+            fontSize: "14px"
           }}
           onClick={submit}
         >
@@ -201,15 +203,15 @@ export const ReviewInfoModal: React.FC<{
         </StyledButton>
       </div>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const ClientVerificationFailedModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
-  reasons: string[];
+  closeModal?: () => void,
+  open: boolean,
+  reasons: string[]
 }> = ({ closeModal, open, reasons }) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon closeModal={closeModal} open={open}>
       <StyledDarkParagraphText
@@ -218,7 +220,7 @@ export const ClientVerificationFailedModal: React.FC<{
           fontSize: "18px",
           letterSpacing: ".5px",
           lineHeight: 1.5,
-          marginTop: "50px",
+          marginTop: "50px"
         }}
         align="center"
       >
@@ -228,7 +230,7 @@ export const ClientVerificationFailedModal: React.FC<{
       <StyledDarkParagraphText weight={600}>{`Reason${
         reasons.length > 1 ? "s" : ""
       }:`}</StyledDarkParagraphText>
-      {reasons.map((reason) => (
+      {reasons.map(reason => (
         <StyledDarkParagraphText
           weight={400}
           align="left"
@@ -247,7 +249,7 @@ export const ClientVerificationFailedModal: React.FC<{
           alignItems: "center",
           justifyContent: "space-evenly",
           width: "100%",
-          gap: "10px",
+          gap: "10px"
         })}
       >
         <StyledButton
@@ -257,11 +259,11 @@ export const ClientVerificationFailedModal: React.FC<{
             justifyContent: "center",
             flex: 2,
             fontWeight: 500,
-            fontSize: "14px",
+            fontSize: "14px"
           }}
-          onClick={(e) => {
-            e.preventDefault();
-            closeModal();
+          onClick={e => {
+            e.preventDefault()
+            closeModal()
           }}
         >
           <ArrowBack className={css({ margin: "0 20px" })} />
@@ -269,14 +271,14 @@ export const ClientVerificationFailedModal: React.FC<{
         </StyledButton>
       </div>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const DRSNotFoundModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ open, closeModal }) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon open={open} closeModal={closeModal}>
       <StyledDarkParagraphText
@@ -285,7 +287,7 @@ export const DRSNotFoundModal: React.FC<{
           fontSize: "18px",
           letterSpacing: "0.4px",
           lineHeight: 1.5,
-          marginTop: "50px",
+          marginTop: "50px"
         }}
         align="center"
       >
@@ -296,26 +298,26 @@ export const DRSNotFoundModal: React.FC<{
       <StyledButton
         small
         style={{
-          padding: "0 50px",
+          padding: "0 50px"
         }}
       >
         re-enter details
       </StyledButton>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const CertificateNotFoundModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ open, closeModal }) => (
   <DRSNotFoundModal open={open} closeModal={closeModal} />
-);
+)
 export const MaxAttemptModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ closeModal, open }) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon open={open} closeModal={closeModal}>
       <StyledDarkParagraphText
@@ -324,7 +326,7 @@ export const MaxAttemptModal: React.FC<{
           fontSize: "18px",
           letterSpacing: ".5px",
           lineHeight: 1.5,
-          marginTop: "50px",
+          marginTop: "50px"
         }}
         align="center"
       >
@@ -336,14 +338,14 @@ export const MaxAttemptModal: React.FC<{
         support.
       </StyledDarkParagraphText>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const BrokerVerificationFailedModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ closeModal, open }) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon open={open} closeModal={closeModal}>
       <StyledDarkParagraphText
@@ -352,7 +354,7 @@ export const BrokerVerificationFailedModal: React.FC<{
           fontSize: "18px",
           letterSpacing: "0.4px",
           lineHeight: 1.5,
-          marginTop: "50px",
+          marginTop: "50px"
         }}
         align="center"
       >
@@ -369,21 +371,25 @@ export const BrokerVerificationFailedModal: React.FC<{
           alignItems: "center",
           justifyContent: "center",
           gap: "20px",
-          padding: "0 50px",
+          padding: "0 50px"
+        }}
+        onClick={e => {
+          e.preventDefault()
+          closeModal()
         }}
       >
         <ArrowBack />
         take me Back
       </StyledButton>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const LogoutModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ closeModal, open }) => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon small open={open} closeModal={closeModal}>
       <StyledDarkParagraphText
@@ -392,7 +398,7 @@ export const LogoutModal: React.FC<{
           fontSize: "18px",
           letterSpacing: "0.4px",
           lineHeight: 1.5,
-          marginTop: "20px",
+          marginTop: "20px"
         }}
         align="center"
       >
@@ -406,28 +412,28 @@ export const LogoutModal: React.FC<{
           justifyContent: "space-evenly",
           width: "100%",
           gap: "10px",
-          marginTop: "10px",
+          marginTop: "10px"
         })}
       >
         <StyledButton>yes</StyledButton>
         <StyledButton
           style={{
             backgroundColor: "transparent",
-            color: "rgba(180, 135, 63, 1)",
+            color: "rgba(180, 135, 63, 1)"
           }}
         >
           cancel
         </StyledButton>
       </div>
     </BaseModal>
-  );
-};
+  )
+}
 
 export const RunCSVModal: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
+  closeModal?: () => void,
+  open: boolean
 }> = ({ closeModal, open }) => {
-  const [css, theme] = useStyletron();
+  const [css, theme] = useStyletron()
   return (
     <BaseModal showCloseIcon small open={open} closeModal={closeModal}>
       <StyledHeaderText
@@ -438,7 +444,7 @@ export const RunCSVModal: React.FC<{
           margin: "30px 0 10px",
           letterSpacing: 0,
           color: theme.colors.primary,
-          alignSelf: "start",
+          alignSelf: "start"
         })}
       >
         Select dates
@@ -447,7 +453,7 @@ export const RunCSVModal: React.FC<{
         className={css({
           display: "flex",
           width: "100%",
-          gap: "20px",
+          gap: "20px"
         })}
       >
         <StyledDateInput placeholder="from" />
@@ -455,21 +461,39 @@ export const RunCSVModal: React.FC<{
       </div>
       <StyledButton
         style={{
-          padding: "0 50px",
+          padding: "0 50px"
         }}
       >
         run .csv
       </StyledButton>
       {addSpace()}
     </BaseModal>
-  );
-};
+  )
+}
 
+const getReviewInfoLabel = (key: string) => {
+  switch (key) {
+    case "country":
+      return "Country"
+    case "province_or_state":
+      return "Province/State"
+    case "street_1":
+      return "Company Street Address 1"
+    case "street_2":
+      return "Company Street Address 2"
+    case "city":
+      return "City"
+    case "zip_code":
+      return "Postal/ZIP Code"
+  }
+}
 export const RegInfoReview: React.FC<{
-  closeModal?: () => void;
-  open: boolean;
-}> = ({ closeModal, open }) => {
-  const [css] = useStyletron();
+  closeModal?: () => void,
+  open: boolean,
+  data: Data,
+  onSubmit: () => void
+}> = ({ closeModal, open, data, onSubmit }) => {
+  const [css] = useStyletron()
   return (
     <BaseModal large open={open} closeModal={closeModal}>
       <StyledDarkParagraphText size="22px" weight={600}>
@@ -478,16 +502,17 @@ export const RegInfoReview: React.FC<{
       <div
         className={css({
           display: "flex",
-          gap: "105px",
+          gap: "105px"
         })}
       >
-        <div>
+        <div className={css({ flex: 1 })}>
           <div style={{ marginTop: 30 }}>
             <StyledDarkParagraphText weight={700} size="20px">
               Firm/Institution Information
             </StyledDarkParagraphText>
+            {addSpace("vert", "20px")}
             <StyledDarkParagraphText weight={400} size="14 px">
-              Company Name: {"company Name"}
+              Company Name: {data.firmDetails.name}
             </StyledDarkParagraphText>
           </div>
           <div style={{ marginTop: 30 }}>
@@ -495,105 +520,134 @@ export const RegInfoReview: React.FC<{
               Billing Address
             </StyledDarkParagraphText>
             {[
-              { country: "USA" },
-              { "province/state": "New york" },
-              {
-                "company street address": "street number 123",
-              },
-              { city: "new york" },
-              { "postal / ZIP code": 123455 },
-            ]
-              .map((i: any, idx, arr) => ({
-                key: Object.keys(i)[0],
-                value: i[Object.keys(i)[0]],
-              }))
-              .map((item) => (
+              "Country",
+              "Province/State",
+              "Company Street Address 1",
+              "Company Street Address 2",
+              "City",
+              "Postal/ZIP Code"
+            ].map(item => {
+              const matchingItem = Object.keys(data.billingInfo)
+                .map(key => ({ key, value: data.billingInfo[key] }))
+                .find(objItem => getReviewInfoLabel(objItem.key) === item)
+              return (
                 <div
                   className={css({
+                    minWidth: "300px",
                     width: "100%",
-                    marginTop: "10px",
-                    padding: "15px 0",
+                    marginTop: "5px",
+                    padding: "10px 0",
                     fontSize: "14px",
                     fontWeight: 400,
                     lineHeight: "18px",
                     color: "#000",
                     ":not(:last-child)": {
-                      borderBottom: "1px solid rgba(209, 208, 208, 1)",
-                    },
+                      borderBottom: "1px solid rgba(209, 208, 208, 1)"
+                    }
                   })}
                 >
-                  {item.key}: {item.value}
+                  {item}: {matchingItem?.value || "Not Specified"}
                 </div>
-              ))}
+              )
+            })}
           </div>
         </div>
-
-        <div>
+        {/**to continue with access coordinatot mapping */}
+        <div className={css({ flex: 1 })}>
           <div style={{ marginTop: 30 }}>
             <StyledDarkParagraphText weight={700} size="20px">
               Access Coordinator(s)
             </StyledDarkParagraphText>
-            {[
-              { "Access Coordinator 1": "John Doe" },
-              { email: "johndoe@gmail.com" },
-            ]
-              .map((i: any, idx, arr) => ({
-                key: Object.keys(i)[0],
-                value: i[Object.keys(i)[0]],
-              }))
-              .map((item) => (
+            {data.accessCoordinatorInfo.map((info, index) => (
+              <>
                 <div
                   className={css({
+                    minWidth: "320px",
                     width: "100%",
-                    marginTop: "10px",
-                    padding: "15px 0",
+                    marginTop: "5px",
+                    padding: "10px 0",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    lineHeight: "18px",
+                    color: "#000",
+                    borderBottom: "1px solid rgba(209, 208, 208, .5)",
+                    textTransform: "capitalize"
+                  })}
+                >
+                  Name: {info.name}
+                </div>
+                <div
+                  className={css({
+                    minWidth: "320px",
+                    width: "100%",
+                    marginTop: "5px",
+                    padding: "10px 0",
                     fontSize: "14px",
                     fontWeight: 400,
                     lineHeight: "18px",
                     color: "#000",
                     borderBottom: "1px solid rgba(209, 208, 208, 1)",
-                    textTransform: "capitalize",
+                    textTransform: "capitalize"
                   })}
                 >
-                  {item.key}: {item.value}
+                  Email Address : {info.email}
                 </div>
-              ))}
+              </>
+            ))}
           </div>
           <div style={{ marginTop: 30 }}>
             <StyledDarkParagraphText weight={700} size="20px">
               Authorized User(s)
             </StyledDarkParagraphText>
-            {[
-              { "Access Coordinator 1": "John Doe" },
-              { email: "johndoe@gmail.com" },
-            ]
-              .map((i: any, idx, arr) => ({
-                key: Object.keys(i)[0],
-                value: i[Object.keys(i)[0]],
-              }))
-              .map((item) => (
+            {data.accessCoordinatorInfo.map((info, index) => (
+              <>
                 <div
                   className={css({
+                    minWidth: "320px",
                     width: "100%",
-                    marginTop: "10px",
-                    padding: "15px 0",
+                    marginTop: "5px",
+                    padding: "10px 0",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    lineHeight: "18px",
+                    color: "#000",
+                    borderBottom: "1px solid rgba(209, 208, 208, .5)",
+                    textTransform: "capitalize"
+                  })}
+                >
+                  Name : {info.name}
+                </div>
+                <div
+                  className={css({
+                    minWidth: "320px",
+                    width: "100%",
+                    marginTop: "5px",
+                    padding: "10px 0",
                     fontSize: "14px",
                     fontWeight: 400,
                     lineHeight: "18px",
                     color: "#000",
                     borderBottom: "1px solid rgba(209, 208, 208, 1)",
-                    textTransform: "capitalize",
+                    textTransform: "capitalize"
                   })}
                 >
-                  {item.key}: {item.value}
+                  Email Address: {info.email}
                 </div>
-              ))}
+              </>
+            ))}
           </div>
         </div>
       </div>
-      <StyledButton small style={{ alignSelf: "end", width: "200px" }}>
+      <StyledButton
+        onClick={e => {
+          e.preventDefault()
+          onSubmit()
+        }}
+        small
+        style={{ alignSelf: "end", width: "200px", minHeight: "40px" }}
+      >
         verify
       </StyledButton>
     </BaseModal>
-  );
-};
+  )
+}

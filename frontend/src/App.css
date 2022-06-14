@@ -5,7 +5,8 @@
 }
 
 .App {
-  background-color: black;
+  background-color: white;
+  color: '#000';
   position: relative;
   width: 100vw;
   height: 100vh
