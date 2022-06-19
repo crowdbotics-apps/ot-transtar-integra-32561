@@ -61,7 +61,7 @@ const RegistrationScreem = (props: Props) => {
           <br />
           <br />
           As a firm, you will register at least one Access Coordinator, who will
-          also be authorized to use the site.Access Coordinator(s) are able to
+          also be authorized to use the site. Access Coordinator(s) are able to
           add additional authorized users and Access Coordinator(s).
         </StyledDarkParagraphText>
       </div>

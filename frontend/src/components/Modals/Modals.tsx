@@ -300,6 +300,10 @@ export const DRSNotFoundModal: React.FC<{
         style={{
           padding: "0 50px"
         }}
+        onClick={e => {
+          e.preventDefault()
+          closeModal()
+        }}
       >
         re-enter details
       </StyledButton>
@@ -387,8 +391,9 @@ export const BrokerVerificationFailedModal: React.FC<{
 
 export const LogoutModal: React.FC<{
   closeModal?: () => void,
-  open: boolean
-}> = ({ closeModal, open }) => {
+  open: boolean,
+  onConfirm: () => void
+}> = ({ closeModal, open, onConfirm }) => {
   const [css] = useStyletron()
   return (
     <BaseModal showCloseIcon small open={open} closeModal={closeModal}>
@@ -415,11 +420,22 @@ export const LogoutModal: React.FC<{
           marginTop: "10px"
         })}
       >
-        <StyledButton>yes</StyledButton>
+        <StyledButton
+          onClick={e => {
+            e.preventDefault()
+            onConfirm()
+          }}
+        >
+          yes
+        </StyledButton>
         <StyledButton
           style={{
             backgroundColor: "transparent",
             color: "rgba(180, 135, 63, 1)"
+          }}
+          onClick={e => {
+            e.preventDefault()
+            closeModal()
           }}
         >
           cancel
@@ -599,7 +615,7 @@ export const RegInfoReview: React.FC<{
             <StyledDarkParagraphText weight={700} size="20px">
               Authorized User(s)
             </StyledDarkParagraphText>
-            {data.accessCoordinatorInfo.map((info, index) => (
+            {data.authorizedUserInfo.map((info, index) => (
               <>
                 <div
                   className={css({

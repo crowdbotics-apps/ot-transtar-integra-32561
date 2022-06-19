@@ -38,11 +38,11 @@ export const addSpace = (
   );
 };
 
-export const StyledHeaderText = styled<TextProps, any>("h1", ({ size, color }) => ({
+export const StyledHeaderText = styled<TextProps, any>("h1", ({ size, color, weight }) => ({
   color: color || "white" ,
   fontSize: size || "38px",
   letterSpacing: "1px",
-  fontWeight: 700,
+  fontWeight: weight || 700,
 }));
 export const StyledParagraphText = styled<TextProps, any>(
   "p",

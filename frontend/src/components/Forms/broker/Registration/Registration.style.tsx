@@ -22,7 +22,7 @@ export const InputField: FC<
     value: string,
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
   } & React.DetailedHTMLProps<
-    React.SVGAttributes<HTMLInputElement>,
+    React.HTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >
 > = ({
@@ -31,9 +31,9 @@ export const InputField: FC<
   type,
   options,
   name,
-  onSelect,
   value,
-  onChange
+  onChange,
+  ...others
 }) => {
   const [css] = useStyletron()
   return (
@@ -43,6 +43,7 @@ export const InputField: FC<
         fontWeight: 400,
         textTransform: "capitalize"
       })}
+      {...others}
     >
       {type === "select" ? (
         <>
@@ -52,10 +53,11 @@ export const InputField: FC<
             options={options}
             onSelect={onChange}
             name={name}
+            {...others}
           />
         </>
       ) : (
-        <>
+        <div>
           <label htmlFor={name}>{label}</label>
           <StyledInput
             className={css({
@@ -69,9 +71,10 @@ export const InputField: FC<
             placeholder={placeholder}
             value={value}
             onChange={onChange}
-            name={name}
+              name={name}
+              
           />
-        </>
+        </div>
       )}
     </div>
   )
