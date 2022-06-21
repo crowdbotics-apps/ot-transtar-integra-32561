@@ -1,3 +1,7 @@
-export {default as ChangePassword} from './ChangePassword';
-export {default as Login} from './Login';
-export { default as ResetPassword} from './ResetPassword';
+export { default as ChangePassword } from "./ChangePassword"
+export { default as Login } from "./Login"
+export { default as ResetPassword } from "./ResetPassword"
+export { default as Dashboard } from "./Dashboard/Dashboard"
+export { default as Notifications } from "./Dashboard/Notifications/Notifications"
+export { default as Notification } from "./Dashboard/Notifications/Notification/Notification"
+export { default as Firms } from "./Dashboard/Firms/Firms"

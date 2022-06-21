@@ -2267,10 +2267,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-baseui@^10.10.0:
-  version "10.12.1"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-10.12.1.tgz#e8e757967386ca304751121fb6e56406e2001ac9"
-  integrity sha512-yLdpqCIHGh0gSBrydX60HiCSu/NoRyET3kGHp4qnULbcuqcTKUuqydISr7ZkzDw+lI11n3x9Eo3px79C8ZA1Aw==
+baseui@^11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-11.1.1.tgz#09aef5f2304299230c4fff94bd9c8450e9efffe1"
+  integrity sha512-lwcClIVaPN97TWSxX3JdqlW7tOFtk8Y8gorqYKLjdd1RXHmbTfMIqHmAZOJRz1jnXyj7rzX6HQ/2Bcc2MzsbBg==
   dependencies:
     "@date-io/date-fns" "^2.6.2"
     card-validator "^6.2.0"
@@ -3066,9 +3066,9 @@ data-urls@^2.0.0:
     whatwg-url "^8.0.0"
 
 date-fns-tz@^1.2.2:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-1.3.4.tgz#8b0e75beb771c7e9f1597aba467dc14431bb5403"
-  integrity sha512-O47vEyz85F2ax/ZdhMBJo187RivZGjH6V0cPjPzpm/yi6YffJg4upD/8ibezO11ezZwP3QYlBHh/t4JhRNx0Ow==
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-1.3.5.tgz#415086b0095dab80121d66912b93f1dec5729e6e"
+  integrity sha512-SNhl/fWe7i2HoIB9ejLZhEEJ6ZtRRpOBbzizFrq11K2/iceS9Nk7fPN2VTYVOMgFB9u0f3eidSC4n1xaRONW2A==
 
 date-fns@^2.6.0:
   version "2.28.0"
@@ -6760,9 +6760,9 @@ react-native@0.64.0:
     ws "^6.1.4"
 
 react-range@^1.8.0:
-  version "1.8.12"
-  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.8.12.tgz#61fe79421a519a4d77c76838012d895b75ead42f"
-  integrity sha512-vY2eCNDvKlXtEpl8xx5AQVIBeE4ZZ46dLVL+82f4FcS9XrPqz4+XagPHmq3IPqYuVQ2H4b8UArXzvVAsd/B03Q==
+  version "1.8.13"
+  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.8.13.tgz#68dd104dcf70d1ac232a5bc87dd54d72c7e5e66d"
+  integrity sha512-Hp7JhEm5hdmBTkbAZLzFet93RgHtEWyba0LQzavZstJDp6kUAIy3c/9PGuICTRq+tUEFN442eeqGbHqZlq4KeA==
 
 react-redux@^7.2.2:
   version "7.2.5"
