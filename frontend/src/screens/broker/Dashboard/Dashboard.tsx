@@ -1,5 +1,5 @@
 import React from "react"
-import Sidebar from "../../../components/Sidebar/Sidebar"
+import { BrokerSidebar } from "../../../components/Sidebar/Sidebar"
 import { useStyletron } from "baseui"
 import { StyledHeaderText } from "../../../components"
 import { useRoutes, Routes, Route, Outlet } from "react-router-dom"
@@ -9,7 +9,7 @@ export const Home = (props: Props) => {
   const [css] = useStyletron()
   return (
     <div style={{ height: "100vh", position: "relative" }}>
-      <Sidebar />
+      <BrokerSidebar />
       <div
         className={css({
           width: "calc(100vw - 300px)",
@@ -21,7 +21,9 @@ export const Home = (props: Props) => {
           position: "fixed",
           top: 0,
           left: "300px",
-          padding: "0 50px"
+          padding: "0 50px",
+          backgroundColor: "#fff",
+          zIndex: 2
         })}
       >
         <StyledHeaderText color="#0E294B" weight={600} size="28px">
