@@ -263,7 +263,7 @@ export const ClientVerificationFailedModal: React.FC<{
           }}
           onClick={e => {
             e.preventDefault()
-            closeModal()
+            closeModal?.()
           }}
         >
           <ArrowBack className={css({ margin: "0 20px" })} />
@@ -302,7 +302,7 @@ export const DRSNotFoundModal: React.FC<{
         }}
         onClick={e => {
           e.preventDefault()
-          closeModal()
+          closeModal?.()
         }}
       >
         re-enter details
@@ -379,7 +379,7 @@ export const BrokerVerificationFailedModal: React.FC<{
         }}
         onClick={e => {
           e.preventDefault()
-          closeModal()
+          closeModal?.()
         }}
       >
         <ArrowBack />
@@ -435,7 +435,7 @@ export const LogoutModal: React.FC<{
           }}
           onClick={e => {
             e.preventDefault()
-            closeModal()
+            closeModal?.()
           }}
         >
           cancel
@@ -452,7 +452,7 @@ export const RunCSVModal: React.FC<{
   const [css, theme] = useStyletron()
   return (
     <BaseModal showCloseIcon small open={open} closeModal={closeModal}>
-      <StyledHeaderText
+      <StyledDarkParagraphText
         size="30px"
         align="left"
         weight={700}
@@ -464,7 +464,7 @@ export const RunCSVModal: React.FC<{
         })}
       >
         Select dates
-      </StyledHeaderText>
+      </StyledDarkParagraphText>
       <div
         className={css({
           display: "flex",
@@ -507,14 +507,24 @@ export const RegInfoReview: React.FC<{
   closeModal?: () => void,
   open: boolean,
   data: Data,
-  onSubmit: () => void
-}> = ({ closeModal, open, data, onSubmit }) => {
+  onSubmit: () => void,
+  showCloseIcon: boolean,
+  showButton: boolean
+}> = ({ closeModal, open, data, onSubmit, showCloseIcon, showButton }) => {
   const [css] = useStyletron()
+  if (!data) return <></>
   return (
-    <BaseModal large open={open} closeModal={closeModal}>
-      <StyledDarkParagraphText size="22px" weight={600}>
-        Please review your information
-      </StyledDarkParagraphText>
+    <BaseModal
+      large
+      open={open}
+      closeModal={closeModal}
+      showCloseIcon={showCloseIcon}
+    >
+      {showButton && (
+        <StyledDarkParagraphText size="22px" weight={600}>
+          Please review your information
+        </StyledDarkParagraphText>
+      )}
       <div
         className={css({
           display: "flex",
@@ -654,16 +664,18 @@ export const RegInfoReview: React.FC<{
           </div>
         </div>
       </div>
-      <StyledButton
-        onClick={e => {
-          e.preventDefault()
-          onSubmit()
-        }}
-        small
-        style={{ alignSelf: "end", width: "200px", minHeight: "40px" }}
-      >
-        verify
-      </StyledButton>
+      {showButton && (
+        <StyledButton
+          onClick={e => {
+            e.preventDefault()
+            onSubmit()
+          }}
+          small
+          style={{ alignSelf: "end", width: "200px", minHeight: "40px" }}
+        >
+          verify
+        </StyledButton>
+      )}
     </BaseModal>
   )
 }

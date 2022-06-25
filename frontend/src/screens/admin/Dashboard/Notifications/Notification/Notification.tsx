@@ -16,7 +16,7 @@ const Notification = () => {
     const { getNotifications, deleteNotification, markAsRead } = useContext(NotificationsContext);
     const { notificationId } = useParams < { notificationId: string }>()
     useEffect(() => {
-        const notification = getNotifications(+notificationId)
+        const notification = getNotifications(+notificationId!)
       if (!notification) {
         return navigate(-1);
       }
@@ -51,7 +51,7 @@ const Notification = () => {
                   <StyledDarkParagraphText color="#818080" size="12px">{data.time}</StyledDarkParagraphText>
               </div>
               <StyledButton small style={{ width: '160px' }} onClick={() => {
-                  deleteNotification(+notificationId);
+                  deleteNotification(+notificationId!);
                   navigate(-1);
 
               }} >DELETE</StyledButton>

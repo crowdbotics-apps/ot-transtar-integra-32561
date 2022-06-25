@@ -9,7 +9,9 @@ import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText,  Style
 import { useStyletron } from "baseui";
 import { RegInfoReview, BrokerVerificationFailedModal } from '../../../Modals/Modals'
 
-type Props = {}
+type Props = {
+  header?: string
+}
 type BillingInfo = {
   country: string,
   street_1: string,
@@ -112,12 +114,6 @@ const authorizedUserInputField: InputFieldObject<AuthorizedUserInfo> = {
       type: "email",
       name: 'email'
     },
-    // {
-    //   type: 'checkbox',
-    //   label: 'send verification email',
-    //   placeholder: "",
-    //   name: 'send_verification'
-    // }
   ]
 }
 
@@ -130,7 +126,7 @@ export type Data = {
   accessCoordinatorInfo: AccessCoordInfo[];
   authorizedUserInfo: AuthorizedUserInfo[]
 }
-const Registration = (props: Props) => {
+const Registration = ({header}: Props) => {
   const [firmDetails, setFirmDetails] = useState({} as {name: string, account_no: string})
   const [billingInfo, setBillingInfo] = useState({} as BillingInfo) 
   const [accessCoordinatorInputState, setAccessCoordinatorInputState] = useState([] as typeof accessCoordinatorInputField['fields'][])
@@ -197,7 +193,7 @@ const Registration = (props: Props) => {
   }
   return (
     <Wrapper>
-      <StyledHeaderText color="rgba(14, 41, 75, 1)" size="22px">REGISTRATION</StyledHeaderText>
+      <StyledHeaderText weight={500} color="rgba(14, 41, 75, 1)" size="22px">{header ?? 'REGISTRATION'}</StyledHeaderText>
       <hr style={{margin: '30px 0 50px', backgroundColor: '#D1D0D0'}} />
 
       <SectionBody>
@@ -337,7 +333,7 @@ const Registration = (props: Props) => {
       billingInfo,
       accessCoordinatorInfo,
       authorizedUserInfo
-      }} open={openReviewModal} closeModal={() => setOpenReviewModal(false)} onSubmit={verifyInfo} />
+      }} open={openReviewModal} closeModal={() => setOpenReviewModal(false)} onSubmit={verifyInfo} showButton showCloseIcon={false} />
       <BrokerVerificationFailedModal open={verificationFailed} closeModal={ () => setVerificationFailed(false)}/>
     </Wrapper>
   )

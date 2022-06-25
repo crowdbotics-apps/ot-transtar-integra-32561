@@ -9,11 +9,13 @@ import {
   StyledPasswordInput,
   addSpace
 } from "../.."
+import { useNavigate } from "react-router-dom"
 import { InputField } from "../broker/Registration/Registration.style"
 
 const LoginForm: FC<{ onSubmit?: (e: MouseEvent<HTMLButtonElement>) => void }> =
   ({ onSubmit }) => {
     const [css, theme] = useStyletron()
+    const navigate = useNavigate()
     return (
       <FormWrapper
         style={{ width: "70%", maxWidth: "370px", minWidth: "350px" }}
@@ -41,7 +43,13 @@ const LoginForm: FC<{ onSubmit?: (e: MouseEvent<HTMLButtonElement>) => void }> =
         <StyledButton onClick={onSubmit}>login</StyledButton>
         {addSpace("vert", "-60px")}
         <StyledDarkParagraphText size="14px">
-          Not registered? Sign up <strong>here.</strong>
+          Not registered? Sign up{" "}
+          <strong
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/register")}
+          >
+            here.
+          </strong>
         </StyledDarkParagraphText>
         {addSpace()}
       </FormWrapper>

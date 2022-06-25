@@ -24,7 +24,8 @@ export default ({
         top: 0,
         left: "300px",
         padding: "0 50px",
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
+        zIndex: 1
       })}
     >
       {children}

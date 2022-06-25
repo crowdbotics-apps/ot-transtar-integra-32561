@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom"
 import {
   Wrapper,
-  Overlay,
-} from "../client/Verification/VerificationScreen.style";
-import LoginForm from "../../components/Forms/common/Login.form";
-import { useStyletron } from "baseui";
-import { StyledHeaderText, StyledParagraphText } from "../../components";
+  Overlay
+} from "../client/Verification/VerificationScreen.style"
+import LoginForm from "../../components/Forms/common/Login.form"
+import { useStyletron } from "baseui"
+import { StyledHeaderText, StyledParagraphText } from "../../components"
 
 const LoginScreen = () => {
-  const [css] = useStyletron();
+  const [css] = useStyletron()
+  const navigate = useNavigate()
   return (
     <Wrapper>
       <Overlay />
@@ -27,10 +28,10 @@ const LoginScreen = () => {
         </div>
       </div>
       <div className={css({ flex: 1, zIndex: 1, alignSelf: "center" })}>
-        <LoginForm />
+        <LoginForm onSubmit={() => navigate("/dashboard")} />
       </div>
     </Wrapper>
-  );
-};
+  )
+}
 
-export default LoginScreen;
+export default LoginScreen

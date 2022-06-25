@@ -9,7 +9,9 @@ import {
   Notifications,
   Notification,
   Firms,
-  Users
+  RegisterFirm,
+  Users,
+  Logout
 } from "../screens/admin"
 
 export default () => {
@@ -20,10 +22,11 @@ const { isLoggedIn, } = useContext(AuthContext)
     path: "dashboard",
     element: <Dashboard />,
     children: [
-      { path: "", element: <Navigate to="notifications" /> },
+      { path: "", element: <Navigate to="firms" /> },
       { path: "notifications", element: <Notifications />, children: [] },
       {path: 'notifications/:notificationId', element: <Notification />},
-      { path: "firms", element: <Firms />},
+      { path: "firms", element: <Firms /> },
+      {path: 'firms/new', element: <RegisterFirm />},
       { path: "users", element: <Users />},
     ]
   },
@@ -35,6 +38,6 @@ const { isLoggedIn, } = useContext(AuthContext)
   const background = location.state && (location.state as any).background
   return <>
     {useRoutes(adminRoutes, background || location)}
-    {background && useRoutes([{path: '/dashboard', element: <Dashboard />, children: [{path: "logout", element: <> </> }]}])}
+    {background && useRoutes([{path: '/dashboard', element: <Dashboard />, children: [{path: "logout", element: <Logout /> }]}])}
     </>
 }
