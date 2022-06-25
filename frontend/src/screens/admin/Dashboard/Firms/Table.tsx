@@ -1,72 +1,24 @@
-import * as React from "react"
-import { useStyletron, withStyle } from "baseui"
-import { Button, KIND } from "baseui/button"
-import TriangleDown from "baseui/icon/triangle-down"
-import { StatefulMenu } from "baseui/menu"
-import { Pagination } from "baseui/pagination"
-import { StatefulPopover, PLACEMENT } from "baseui/popover"
-import {
-  Table,
-  TableBuilder,
-  TableBuilderColumn
-  // StyledTable,
-  // StyledHead,
-  // StyledHeadCell,
-  // StyledBody,
-  // StyledRow,
-  // StyledCell
-} from "baseui/table-semantic"
-import { StyledDarkParagraphText } from "../../../../components"
-// flowlint-next-line unclear-type:off
-const data = [
-  { name: "Company Name", account: "1234557889", id: 1 },
-  { name: "Company Name", account: "1234557889", id: 2 },
-  { name: "Company Name", account: "1234557889", id: 3 },
-  { name: "Company Name", account: "1234557889", id: 4 },
-  { name: "Company Name", account: "1234557889", id: 5 },
-  { name: "Company Name", account: "1234557889", id: 6 },
-  { name: "Company Name", account: "1234557889", id: 7 },
-  { name: "Company Name", account: "1234557889", id: 8 },
-  { name: "Company Name", account: "1234557889", id: 9 },
-  { name: "Company Name", account: "1234557889", id: 10 },
-  { name: "Company Name", account: "1234557889", id: 11 },
-  { name: "Company Name", account: "1234557889", id: 12 },
-  { name: "Company Name", account: "1234557889", id: 1 },
-  { name: "Company Name", account: "1234557889", id: 2 },
-  { name: "Company Name", account: "1234557889", id: 3 },
-  { name: "Company Name", account: "1234557889", id: 4 },
-  { name: "Company Name", account: "1234557889", id: 5 },
-  { name: "Company Name", account: "1234557889", id: 6 },
-  { name: "Company Name", account: "1234557889", id: 7 },
-  { name: "Company Name", account: "1234557889", id: 8 },
-  { name: "Company Name", account: "1234557889", id: 9 },
-  { name: "Company Name", account: "1234557889", id: 10 },
-  { name: "Company Name", account: "1234557889", id: 11 },
-  { name: "Company Name", account: "1234557889", id: 12 }
-]
-function PaginatedTable(props) {
+import React from "react"
+import { useStyletron } from "baseui"
+import { TableBuilder, TableBuilderColumn } from "baseui/table-semantic"
+import { addSpace, StyledDarkParagraphText } from "../../../../components"
+
+const Table = ({
+  data,
+  onClick
+}: {
+  data: any[],
+  onClick: (id: number) => void
+}) => {
   const [css, theme] = useStyletron()
   const [page, setPage] = React.useState(1)
-  const [limit, setLimit] = React.useState(8)
+  const limit = 8
 
   const handlePageChange = nextPage => {
-    if (nextPage < 1) {
-      return
-    }
-    if (nextPage > Math.ceil(props.data.length / limit)) {
+    if (nextPage < 1 || nextPage > Math.ceil(data.length / limit)) {
       return
     }
     setPage(nextPage)
-  }
-
-  const handleLimitChange = nextLimit => {
-    const nextPageNum = Math.ceil(props.data.length / nextLimit)
-    if (nextPageNum < page) {
-      setLimit(nextLimit)
-      setPage(nextPageNum)
-    } else {
-      setLimit(nextLimit)
-    }
   }
 
   const window = () => {
@@ -74,13 +26,6 @@ function PaginatedTable(props) {
     return data.slice(min, min + limit)
   }
 
-  // const StyledNameCell = withStyle(StyledCell, {
-  //   fontWeight: 600,
-  //   fontSize: "14px",
-  //   color: "#0E294B",
-  //   alignItems: "center",
-  //   paddingLeft: "40px"
-  // })
   return (
     <React.Fragment>
       <div
@@ -93,7 +38,6 @@ function PaginatedTable(props) {
       ></div>
       <div className={css({ height: "500px" })}>
         <TableBuilder
-          // columns={props.columns}
           data={window()}
           overrides={{
             Table: {
@@ -164,11 +108,12 @@ function PaginatedTable(props) {
           <TableBuilderColumn header="">
             {row => (
               <div
-                onClick={() => console.log(row.id)}
+                onClick={() => onClick(row.id)}
                 style={{
                   color: "#B4873F",
                   textTransform: "uppercase",
-                  textAlign: "right"
+                  textAlign: "right",
+                  cursor: "pointer"
                 }}
               >
                 See Details
@@ -176,11 +121,18 @@ function PaginatedTable(props) {
             )}
           </TableBuilderColumn>
         </TableBuilder>
+        {!data.length && (
+          <StyledDarkParagraphText>
+            {addSpace("vert", "20px")}
+            No results found
+          </StyledDarkParagraphText>
+        )}
       </div>
+
       <div
         className={css({
           marginTop: "20px",
-          display: "flex",
+          display: data.length ? "flex" : "none",
           justifyContent: "space-between"
         })}
       >
@@ -202,7 +154,7 @@ function PaginatedTable(props) {
               cursor: page > 1 ? "pointer" : "not-allowed",
               marginRight: 20
             }}
-            onClick={() => page > 1 && handlePageChange(page - 1)}
+            onClick={() => handlePageChange(page - 1)}
           >
             <svg
               width="7"
@@ -249,10 +201,7 @@ function PaginatedTable(props) {
                   ? "not-allowed"
                   : "pointer"
             }}
-            onClick={() =>
-              page !== Math.ceil(data.length / limit) &&
-              handlePageChange(page + 1)
-            }
+            onClick={() => handlePageChange(page + 1)}
           >
             NEXT
             <svg
@@ -274,21 +223,9 @@ function PaginatedTable(props) {
             </svg>
           </div>
         </div>
-        {/* <Pagination
-          currentPage={page}
-          numPages={Math.ceil(data.length / limit)}
-          onPageChange={({ nextPage }) => handlePageChange(nextPage)}
-      /> */}
       </div>
     </React.Fragment>
   )
 }
 
-const COLUMNS = ["company name", "account", ""]
-const DATA = Array.from({ length: 45 }, (_, i) =>
-  Array.from({ length: 3 }, () => `row: ${i + 1}`)
-)
-
-export default function Example() {
-  return <PaginatedTable columns={COLUMNS} data={DATA} />
-}
+export default Table
