@@ -1,9 +1,69 @@
-import React from "react"
+import React, { useState } from "react"
 import { DashboardWrapper } from "../Dashboard.style"
+import { StyledDarkParagraphText, StyledButton } from "../../../../components"
+import RegistrationForm, {
+  Data
+} from "../../../../components/Forms/broker/Registration/Registration.form"
 type Props = {}
 
+const data: Data = {
+  firmDetails: { name: "Lisa Scotland", account_no: "0987654342" },
+  billingInfo: {
+    country: "USA",
+    street_1: "",
+    street_2: "",
+    province_or_state: "FL",
+    city: "Miami",
+    zip_code: "30106"
+  },
+  accessCoordinatorInfo: [
+    { name: "Emmanuel", email: "emmanuel@gmail.com", send_verification: true },
+    { name: "Emmanuel", email: "emmanuel@gmail.com", send_verification: true },
+    { name: "Emmanuel", email: "emmanuel@gmail.com", send_verification: true }
+  ],
+  authorizedUserInfo: [
+    {
+      name: "Emmanuel",
+      email: "emmanuel@gmail.com", send_verification: true
+    }
+  ]
+}
 const FirmUsers = (props: Props) => {
-  return <DashboardWrapper>Firm Users</DashboardWrapper>
+  const [isEditable, setIsEditable] = useState(false)
+
+  return (
+    <DashboardWrapper>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
+        <StyledDarkParagraphText size="22px" weight={600}>
+          COMPANY INFORMATION
+        </StyledDarkParagraphText>
+        <StyledButton
+          small
+          style={{
+            width: 160,
+            background: "#fff",
+            color: "#B4873F",
+            border: "1px solid #B4873F"
+          }}
+          onClick={_ => setIsEditable(true)}
+        >
+          EDIT
+        </StyledButton>
+      </div>
+      <RegistrationForm
+        header=""
+        isEditable={isEditable}
+        onSave={() => setIsEditable(false)}
+        data={data}
+      />
+    </DashboardWrapper>
+  )
 }
 
 export default FirmUsers

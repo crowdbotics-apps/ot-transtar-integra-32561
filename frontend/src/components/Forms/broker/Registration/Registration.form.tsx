@@ -1,16 +1,19 @@
-import React, { ChangeEvent, useEffect, useState, MouseEvent } from "react"
+import React, { ChangeEvent, useEffect, useState, MouseEvent, useRef } from "react"
 import {
   Wrapper,
   InputField,
   SectionHeader,
   SectionBody,
 } from "./Registration.style"
-import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText,  StyledHeaderText } from "../../../"
+import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText, StyledHeaderText } from "../../../"
 import { useStyletron } from "baseui";
 import { RegInfoReview, BrokerVerificationFailedModal } from '../../../Modals/Modals'
-
+import { CANADA_PROVINCES, US_STATES } from '../../../../utils'
 type Props = {
-  header?: string
+  header?: string,
+  data?: Data,
+  isEditable?: boolean;
+  onSave?: () => void
 }
 type BillingInfo = {
   country: string,
@@ -31,12 +34,12 @@ type InputFieldObject<Type> = {
   fields: {
     label: string,
     placeholder: string,
-    type: "select" | "email" | "text" | "checkbox" ,
-    options?: string[],
+    type: "select" | "email" | "text" | "checkbox",
+    options?: { name: string, value: string }[],
     name: keyof Omit<Type, 'send_verification'>
   }[]
 }
-const billingInputFields: InputFieldObject<BillingInfo>[] = [
+const getBillingInputFields = (state_options: { name: string, value: string }[]): InputFieldObject<BillingInfo>[] => [
   {
     header: "Billing Address",
     fields: [
@@ -44,7 +47,7 @@ const billingInputFields: InputFieldObject<BillingInfo>[] = [
         label: "country",
         placeholder: "Please Select Country",
         type: "select",
-        options: ["USA", "Canada"],
+        options: [{ name: "USA", value: "USA" }, { name: "Canada", value: "Canada" }],
         name: 'country'
       },
       {
@@ -57,7 +60,7 @@ const billingInputFields: InputFieldObject<BillingInfo>[] = [
         label: "Province/State",
         placeholder: "Please select Province/State",
         type: "select",
-        options: ["NY", "Florida", "New Jersey"],
+        options: state_options,
         name: 'province_or_state'
       },
       {
@@ -126,27 +129,59 @@ export type Data = {
   accessCoordinatorInfo: AccessCoordInfo[];
   authorizedUserInfo: AuthorizedUserInfo[]
 }
-const Registration = ({header}: Props) => {
-  const [firmDetails, setFirmDetails] = useState({} as {name: string, account_no: string})
-  const [billingInfo, setBillingInfo] = useState({} as BillingInfo) 
+const repeatArrayValues = (value: any, count: number) => {
+  let result: any[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(value)
+  }
+  return result;
+}
+const Registration = ({ header, data, isEditable, onSave }: Props) => {
+  const [firmDetails, setFirmDetails] = useState({} as { name: string, account_no: string })
+  const [billingInfo, setBillingInfo] = useState({} as BillingInfo)
   const [accessCoordinatorInputState, setAccessCoordinatorInputState] = useState([] as typeof accessCoordinatorInputField['fields'][])
   const [authorizedUserInputState, setAuthorizedUserInputState] = useState([] as typeof authorizedUserInputField['fields'][])
   const [accessCoordinatorInfo, setAccessCoordinatorInfo] = useState([initUserInfo] as AccessCoordInfo[])
   const [authorizedUserInfo, setAuthorizedUserInfo] = useState([initUserInfo] as AuthorizedUserInfo[]);
   const [openReviewModal, setOpenReviewModal] = useState(false);
-  const [ verificationFailed, setVerificationFailed] = useState(false)
+  const [verificationFailed, setVerificationFailed] = useState(false);
+  const [stateOptions, setStateOptions] = useState([] as { value: string, name: string }[]);
+  const readOnly = isEditable === false
+  useEffect(() => {
+    switch (billingInfo.country?.toLowerCase()) {
+      case 'usa':
+        setStateOptions(US_STATES);
+        break;
+      case 'canada':
+        setStateOptions(CANADA_PROVINCES);
+        break;
+      default:
+        setStateOptions([])
+    }
+  }, [billingInfo.country])
   const [css] = useStyletron();
 
   useEffect(() => {
-  setAccessCoordinatorInputState([accessCoordinatorInputField.fields])
-    setAuthorizedUserInputState([authorizedUserInputField.fields]);
+    setAccessCoordinatorInputState(repeatArrayValues(accessCoordinatorInputField.fields, data?.accessCoordinatorInfo?.length || 1));
+    setAuthorizedUserInputState(repeatArrayValues(authorizedUserInputField.fields, data?.authorizedUserInfo?.length || 1));
+    if (data) {
+      const { accessCoordinatorInfo, authorizedUserInfo, billingInfo, firmDetails } = data;
+      setAccessCoordinatorInfo(accessCoordinatorInfo || [])
+      setAuthorizedUserInfo(authorizedUserInfo || [])
+      setBillingInfo(billingInfo || {})
+
+      setFirmDetails(firmDetails || {})
+    }
   }, [])
 
   const addMoreAccessCoordinator = () => {
+    if (readOnly) return
     setAccessCoordinatorInputState(a => [...a, accessCoordinatorInputField.fields]);
     setAccessCoordinatorInfo(info => [...info, initUserInfo])
   }
   const addMoreAuthorizedUser = () => {
+    if (readOnly) return
+
     setAuthorizedUserInputState(a => [...a, authorizedUserInputField.fields]);
     setAuthorizedUserInfo(info => [...info, initUserInfo])
   }
@@ -155,28 +190,30 @@ const Registration = ({header}: Props) => {
   const handleFirmDetailsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFirmDetails(f => ({ ...f, [name]: value }));
-  
+
   }
-  const handleBillingInputChange = ({ target: {name, value} }: ChangeEvent<HTMLInputElement>): void => {
-    setBillingInfo(b => ({...b, [name]: value}))
+  const handleBillingInputChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement>): void => {
+    // set province_or_state to empty if country changes
+    setBillingInfo(b => ({ ...b, [name]: value, ...(name === 'country' && value !== billingInfo[name] && { province_or_state: '' }) }))
   }
 
   const handleAccessCoordinatorChange = (e: ChangeEvent<HTMLInputElement>, index: number): void => {
     const { name, value } = e.target;
     const oldCopy = [...accessCoordinatorInfo]
-    oldCopy[index] = {...oldCopy[index], [name]: value}
+    oldCopy[index] = { ...oldCopy[index], [name]: value }
     setAccessCoordinatorInfo(oldCopy);
   }
 
   const handleAuthorizedUserChange = (e: ChangeEvent<HTMLInputElement>, index: number): void => {
     const { name, value } = e.target;
     const oldCopy = [...authorizedUserInfo]
-    oldCopy[index] = {...oldCopy[index], [name]: value}
+    oldCopy[index] = { ...oldCopy[index], [name]: value }
     setAuthorizedUserInfo(oldCopy);
   }
 
   const submitForm = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (onSave) return onSave();
     const data = {
       firmDetails,
       billingInfo,
@@ -194,7 +231,7 @@ const Registration = ({header}: Props) => {
   return (
     <Wrapper>
       <StyledHeaderText weight={500} color="rgba(14, 41, 75, 1)" size="22px">{header ?? 'REGISTRATION'}</StyledHeaderText>
-      <hr style={{margin: '30px 0 50px', backgroundColor: '#D1D0D0'}} />
+      <hr style={{ margin: '30px 0 50px', backgroundColor: '#D1D0D0' }} />
 
       <SectionBody>
         <InputField
@@ -204,7 +241,7 @@ const Registration = ({header}: Props) => {
           label="Firm/Institution Name"
           value={firmDetails.name}
           onChange={handleFirmDetailsChange}
-          
+          readOnly={readOnly}
         />
         <InputField
           type="text"
@@ -213,16 +250,19 @@ const Registration = ({header}: Props) => {
           label="Account Number"
           onChange={handleFirmDetailsChange}
           value={firmDetails.account_no}
+          readOnly={isEditable !== undefined}
         />
       </SectionBody>
       <div>
-        {billingInputFields.map(({ header, fields }) => (
+        {getBillingInputFields(stateOptions).map(({ header, fields }) => (
           <>
             {addSpace("vert", "50px")}
             <SectionHeader>{header}</SectionHeader>
             <SectionBody>
               {fields.map(field => (
-                <InputField {...field} value={billingInfo[field.label]} onChange={handleBillingInputChange}/>
+                <InputField {...field} value={billingInfo[field.name]} onChange={handleBillingInputChange}
+                  readOnly={readOnly}
+                />
               ))}
             </SectionBody>
           </>
@@ -240,7 +280,9 @@ const Registration = ({header}: Props) => {
             })}>
               <SectionBody>
                 {fields.map((field) => {
-                  return <InputField onChange={(e: ChangeEvent<HTMLInputElement>) => handleAccessCoordinatorChange(e, idx)} {...field} value={accessCoordinatorInfo[idx][field.name]} />
+                  return <InputField
+                    readOnly={readOnly}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleAccessCoordinatorChange(e, idx)} {...field} value={accessCoordinatorInfo[idx][field.name]} />
                 })}
               </SectionBody>
               <div className={css({
@@ -250,14 +292,15 @@ const Registration = ({header}: Props) => {
                 height: "fit-content",
               })}>
                 <StyledCheckbox onChange={() => {
+                  if (readOnly) return
                   const accessCoordInfoCopy = [...accessCoordinatorInfo]
-                   accessCoordInfoCopy[idx] = { ...accessCoordinatorInfo[idx], send_verification: !accessCoordinatorInfo[idx].send_verification }
+                  accessCoordInfoCopy[idx] = { ...accessCoordinatorInfo[idx], send_verification: !accessCoordinatorInfo[idx].send_verification }
                   setAccessCoordinatorInfo(accessCoordInfoCopy)
-                }} checked={accessCoordinatorInfo[idx]['send_verification'] }/><StyledDarkParagraphText size={'14px'}> Send Verification Email</StyledDarkParagraphText>
+                }} checked={accessCoordinatorInfo[idx]['send_verification']} /><StyledDarkParagraphText size={'14px'}> Send Verification Email</StyledDarkParagraphText>
               </div>
             </div>
           })}
-            {addSpace('vert', '30px')}
+          {addSpace('vert', '30px')}
           <div className={css({
             display: 'flex',
             flexFlow: 'column',
@@ -289,7 +332,9 @@ const Registration = ({header}: Props) => {
             })}>
               <SectionBody>
                 {fields.map((field) => {
-                  return <InputField onChange={(e: ChangeEvent<HTMLInputElement>) => handleAuthorizedUserChange(e, idx)} {...field} value={authorizedUserInfo[idx][field.name]} />
+                  return <InputField
+                    readOnly={readOnly}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleAuthorizedUserChange(e, idx)} {...field} value={authorizedUserInfo[idx][field.name]} />
                 })}
               </SectionBody>
               <div className={css({
@@ -299,14 +344,15 @@ const Registration = ({header}: Props) => {
                 height: "fit-content",
               })}>
                 <StyledCheckbox onChange={() => {
+                  if (readOnly) return
                   const authorizedUserInfoCopy = [...authorizedUserInfo]
-                   authorizedUserInfoCopy[idx] = { ...authorizedUserInfo[idx], send_verification: !authorizedUserInfo[idx].send_verification }
+                  authorizedUserInfoCopy[idx] = { ...authorizedUserInfo[idx], send_verification: !authorizedUserInfo[idx].send_verification }
                   setAuthorizedUserInfo(authorizedUserInfoCopy)
-                }} checked={authorizedUserInfo[idx]['send_verification'] }/><StyledDarkParagraphText size={'14px'}> Send Verification Email</StyledDarkParagraphText>
+                }} checked={authorizedUserInfo[idx]['send_verification']} /><StyledDarkParagraphText size={'14px'}> Send Verification Email</StyledDarkParagraphText>
               </div>
             </div>
           })}
-            {addSpace('vert', '30px')}
+          {addSpace('vert', '30px')}
           <div className={css({
             display: 'flex',
             flexFlow: 'column',
@@ -326,15 +372,15 @@ const Registration = ({header}: Props) => {
           </div>
         </>
       </div>
-      <hr style={{margin: '50px 0', backgroundColor: '#D1D0D0'}} />
-      <StyledButton onClick={submitForm} small style={{ float: 'right', width: '260px', }}>submit</StyledButton>
+      <hr style={{ margin: '50px 0', backgroundColor: '#D1D0D0' }} />
+      {!readOnly && <StyledButton onClick={submitForm} small style={{ float: 'right', width: '260px', }}>{isEditable !== undefined ? 'save' : 'submit'}</StyledButton>}
       <RegInfoReview data={{
-      firmDetails,
-      billingInfo,
-      accessCoordinatorInfo,
-      authorizedUserInfo
+        firmDetails,
+        billingInfo,
+        accessCoordinatorInfo,
+        authorizedUserInfo
       }} open={openReviewModal} closeModal={() => setOpenReviewModal(false)} onSubmit={verifyInfo} showButton showCloseIcon={false} />
-      <BrokerVerificationFailedModal open={verificationFailed} closeModal={ () => setVerificationFailed(false)}/>
+      <BrokerVerificationFailedModal open={verificationFailed} closeModal={() => setVerificationFailed(false)} />
     </Wrapper>
   )
 }

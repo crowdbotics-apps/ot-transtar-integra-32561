@@ -86,12 +86,12 @@ export const StyledInput = styled("input", () => ({
 
 export const StyledCustomSelect: React.FC<{
   placeholder: string;
-  options: string[];
+  options: {value: string, name: string}[];
   onSelect: (e: ChangeEvent<HTMLInputElement>) => void;
-  name: string
-}> = ({ placeholder, options, onSelect, name }) => {
+  name: string;
+  value: string,
+}> = ({ placeholder, options, onSelect, name, value, ...others }) => {
   const [css] = useStyletron();
-  const [value, setValue] = useState("");
   const [optionsOpen, setOptionsOpen] = useState(false);
   const inputRef = useRef(null);
   const inputStyle = css({
@@ -122,6 +122,7 @@ export const StyledCustomSelect: React.FC<{
           
         })}
         onClick={(e) => {
+          if((others as any).readOnly) return
           setOptionsOpen(!optionsOpen);
           console.log("clicked");
         }}
@@ -154,7 +155,7 @@ export const StyledCustomSelect: React.FC<{
         </svg>
       </div>
 {/**handle clickaway */}
-     {optionsOpen && <div onClick={() => setOptionsOpen(false)} className={ css({position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0, 0, 0, .02)', zIndex: 2})}/>}
+     {optionsOpen && <div onClick={() => setOptionsOpen(false)} className={ css({position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0, 0, 0, .02)', zIndex: 1})}/>}
 
       <div
         className={css({
@@ -167,7 +168,9 @@ export const StyledCustomSelect: React.FC<{
           display: optionsOpen ? "flex" : "none",
           flexFlow: "column",
           border: "1px solid rgba(139, 139, 139, 1)",
-        zIndex: 2
+          zIndex: 1, 
+          maxHeight: '300px',
+          overflowY: 'auto'
           
 
         })}
@@ -175,13 +178,11 @@ export const StyledCustomSelect: React.FC<{
         {options.map((opt) => (
           <StyledInput
             onClick={() => {
-              setValue(opt)
-            onSelect({target: {name, value: opt}} as any)
-
+            onSelect({target: {name, value: opt.name}} as any)
               setOptionsOpen(false);
             }}
             readOnly
-            value={opt}
+            value={opt.name}
             className={inputStyle + ' ' +  css({
               border: 'none',
               outline: 'none',
@@ -192,7 +193,7 @@ export const StyledCustomSelect: React.FC<{
               ':hover': {
                 background: "rgba(241, 241, 241, 1)"
               },
-              ...(value === opt && {background: 'rgba(241, 241, 241, 1) !important'})
+              ...(value === opt.name && {background: 'rgba(241, 241, 241, 1) !important'})
             })}
           />
         ))}

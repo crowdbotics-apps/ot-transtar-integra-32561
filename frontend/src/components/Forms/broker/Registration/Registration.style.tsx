@@ -17,12 +17,12 @@ export const InputField: FC<
     label: string,
     placeholder: string,
     type: "text" | "email" | "select" | "checkbox",
-    options?: string[],
+    options?: { name: string, value: string }[],
     name: string,
     value: string,
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
   } & React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLInputElement>,
+    React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >
 > = ({
@@ -35,50 +35,51 @@ export const InputField: FC<
   onChange,
   ...others
 }) => {
-  const [css] = useStyletron()
-  return (
-    <div
-      className={css({
-        fontSize: "14px",
-        fontWeight: 400,
-        textTransform: "capitalize"
-      })}
-      {...others}
-    >
-      {type === "select" ? (
-        <>
-          <label htmlFor={name}>{label}</label>
-          <StyledCustomSelect
-            placeholder={placeholder}
-            options={options}
-            onSelect={onChange}
-            name={name}
-            {...others}
-          />
-        </>
-      ) : (
-        <div>
-          <label htmlFor={name}>{label}</label>
-          <StyledInput
-            className={css({
-              background: "#fff !important",
-              "::placeholder": {
-                color: "rgba(176, 176, 176, 1) !important"
-              }
-            })}
-            id={name}
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            onChange={onChange}
+    const [css] = useStyletron()
+    return (
+      <div
+        className={css({
+          fontSize: "14px",
+          fontWeight: 400,
+          textTransform: "capitalize"
+        })}
+        {...others}
+      >
+        {type === "select" ? (
+          <>
+            <label htmlFor={name}>{label}</label>
+            <StyledCustomSelect
+              placeholder={placeholder}
+              options={options!}
+              onSelect={onChange}
               name={name}
-              
-          />
-        </div>
-      )}
-    </div>
-  )
-}
+              value={value}
+              {...others}
+            />
+          </>
+        ) : (
+          <div>
+            <label htmlFor={name}>{label}</label>
+            <StyledInput
+              className={css({
+                background: "#fff !important",
+                "::placeholder": {
+                  color: "rgba(176, 176, 176, 1) !important"
+                }
+              })}
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              value={value}
+              onChange={onChange}
+              name={name}
+              {...others}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
 
 export const SectionBody = styled("div", () => ({
   display: "grid",
