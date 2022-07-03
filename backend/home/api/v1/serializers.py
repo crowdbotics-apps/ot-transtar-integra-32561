@@ -6,6 +6,8 @@ from allauth.account.forms import ResetPasswordForm
 from allauth.utils import email_address_exists, generate_unique_username
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
+from home.models import Company
+from users.models import AccessCoordinator, AuthorizedUsers
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
 
@@ -15,55 +17,84 @@ User = get_user_model()
 
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'name', 'email', 'password')
+        model = Company
+        fields = ('id',
+        'name',
+        'account_number',
+        'access_coordinator',
+        'authorized_users',
+        'street_address',
+        'street_address_two',
+        'city',
+        'state',
+        'postal',
+        'country'
+        )
         extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'style': {
-                    'input_type': 'password'
-                }
+            'name': {
+                'required': True,
+                'allow_blank': False,
             },
-            'email': {
+            'account_number': {
                 'required': True,
                 'allow_blank': False,
             }
         }
-
-    def _get_request(self):
-        request = self.context.get('request')
-        if request and not isinstance(request, HttpRequest) and hasattr(request, '_request'):
-            request = request._request
-        return request
-
-    def validate_email(self, email):
-        email = get_adapter().clean_email(email)
-        if allauth_settings.UNIQUE_EMAIL:
-            if email and email_address_exists(email):
-                raise serializers.ValidationError(
-                    _("A user is already registered with this e-mail address."))
-        return email
-
     def create(self, validated_data):
-        user = User(
-            email=validated_data.get('email'),
-            name=validated_data.get('name'),
-            username=generate_unique_username([
-                validated_data.get('name'),
-                validated_data.get('email'),
-                'user'
-            ])
-        )
-        user.set_password(validated_data.get('password'))
-        user.save()
-        request = self._get_request()
-        setup_user_email(request, user, [])
-        return user
+        access_coordinator=validated_data.get('access_coordinator')
+        authorized_users = validated_data.get('authorized_users')
+        for i in authorized_users:
+            user = User(
+                email=i.email,
+                name=i.name,
+                username=generate_unique_username([
+                    i.email,
+                    i.name,
+                    'user'
+                ])
+            )
+            #passo = User.objects.make_random_password()
+            user.set_password('password')
+            user.save()
+            authuser = AuthorizedUsers(user=user)
+            authuser.save()
+            #request = self._get_request()
+            #setup_user_email(request, user, [])
+
+        for i in access_coordinator:
+            user = User(
+                email=i.email,
+                name=i.name,
+                username=generate_unique_username([
+                    i.email,
+                    i.name,
+                    'user'
+                ])
+            )
+            user.set_password('password')
+            user.save()
+            accessuser = AccessCoordinator(user=user)
+            accessuser.save()
+            #request = self._get_request()
+            #setup_user_email(request, user, [])
+        return validated_data
 
     def save(self, request=None):
         """rest_auth passes request so we must override to accept it"""
         return super().save()
 
+
+'''class AuthorizedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AuthorizedUsers
+        fields = ['id', 'email', 'name']
+
+
+class AccessCoordinatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccessCoordinator
+        fields = ['id', 'email', 'name']
+'''
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,3 +105,12 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordSerializer(PasswordResetSerializer):
     """Custom serializer for rest_auth to solve reset password error"""
     password_reset_form_class = ResetPasswordForm
+
+"""
+To be worked on, for a proper serialized class and call to be used in future.
+"""
+
+class VerifyCertificateSerializer(serializers.Serializer):
+    pass
+class VerifyDRSSerializer(serializers.Serializer):
+    pass
