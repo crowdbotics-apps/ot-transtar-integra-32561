@@ -5,6 +5,8 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from rest_auth.serializers import LoginSerializer
+
 from home.api.v1.serializers import (
     SignupSerializer,
     UserSerializer,
@@ -20,7 +22,7 @@ class SignupViewSet(ModelViewSet):
 class LoginViewSet(ViewSet):
     """Based on rest_framework.authtoken.views.ObtainAuthToken"""
 
-    serializer_class = AuthTokenSerializer
+    serializer_class = LoginSerializer
 
     def create(self, request):
         serializer = self.serializer_class(
