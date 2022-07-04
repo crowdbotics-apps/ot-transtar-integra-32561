@@ -12,7 +12,7 @@ from home.api.v1.viewsets import (
 )
 
 router = DefaultRouter()
-router.register("register", SignupViewSet, basename="signup")
+router.register("company", SignupViewSet, basename="company")
 router.register("login", LoginViewSet, basename="login")
 
 
