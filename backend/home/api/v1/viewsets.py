@@ -1,3 +1,4 @@
+from home.models import Company
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ModelViewSet, ViewSet
@@ -11,8 +12,9 @@ from home.api.v1.serializers import (
 
 
 class SignupViewSet(ModelViewSet):
+    queryset= Company.objects.all()
     serializer_class = SignupSerializer
-    http_method_names = ["post"]
+    http_method_names = ["post","get","patch","delete"]
 
 
 class LoginViewSet(ViewSet):

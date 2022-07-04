@@ -10,19 +10,75 @@ from home.models import Company
 from users.models import AccessCoordinator, AuthorizedUsers
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
+from django.db import models
 
 
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'name']
+        extra_kwargs ={
+            'id':{
+                'required':False
+            }
+        }
+
+class AuthorizedUserSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name')
+    email = serializers.EmailField(source='user.email')
+    class Meta:
+        model = AuthorizedUsers
+        fields = ['id', 'email', 'name', 'company']
+        extra_kwargs = {
+            'name': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'email': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'company': {
+                'required': False
+            }
+        }
+
+
+class AccessCoordinatorSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name')
+    email = serializers.EmailField(source='user.email')
+    
+    class Meta:
+        model = AccessCoordinator
+        fields = ['id', 'email', 'name', 'company']
+        extra_kwargs = {
+            'name': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'email': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'company': {
+                'required': False,
+            }
+        }
+
+
 class SignupSerializer(serializers.ModelSerializer):
+    accesscoordinator_set = AccessCoordinatorSerializer(many=True)
+    authorizedusers_set = AuthorizedUserSerializer(many=True)
     class Meta:
         model = Company
         fields = ('id',
         'name',
         'account_number',
-        'access_coordinator',
-        'authorized_users',
+        'accesscoordinator_set',
+        'authorizedusers_set',
         'street_address',
         'street_address_two',
         'city',
@@ -38,68 +94,74 @@ class SignupSerializer(serializers.ModelSerializer):
             'account_number': {
                 'required': True,
                 'allow_blank': False,
+            },
+            'access_coordinators':{
+                'allow_blank': True,
+                'required': False,
+
+            },
+            'authorized_users':{
+                'allow_blank': True,
+                'required': False
             }
         }
     def create(self, validated_data):
-        access_coordinator=validated_data.get('access_coordinator')
-        authorized_users = validated_data.get('authorized_users')
-        for i in authorized_users:
-            user = User(
-                email=i.email,
-                name=i.name,
-                username=generate_unique_username([
-                    i.email,
-                    i.name,
-                    'user'
-                ])
-            )
-            #passo = User.objects.make_random_password()
-            user.set_password('password')
-            user.save()
-            authuser = AuthorizedUsers(user=user)
-            authuser.save()
+        access_coordinator=validated_data.pop('accesscoordinator_set')
+        authorized_user = validated_data.pop('authorizedusers_set')
+        company = Company.objects.create(**validated_data)
+        
+
+        for i in access_coordinator:
+            user=None
+            try:
+                user = User.objects.get(email=i['user']['email'])
+            except User.DoesNotExist:
+                user = User(
+                    email=i['user']['email'],
+                    name=i['user']['name'],
+                    username=generate_unique_username([
+                        i['user']['email'],
+                        i['user']['name'],
+                        'accessuser'
+                    ])
+                )
+                user.set_password('password')
+                user.save()
+            accessuser = AccessCoordinator.objects.create(user=user,company=company)
+                #accessuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
 
-        for i in access_coordinator:
-            user = User(
-                email=i.email,
-                name=i.name,
-                username=generate_unique_username([
-                    i.email,
-                    i.name,
-                    'user'
-                ])
-            )
-            user.set_password('password')
-            user.save()
-            accessuser = AccessCoordinator(user=user)
-            accessuser.save()
+        for i in authorized_user:
+            user=None
+            try:
+                user = User.objects.get(email=i['user']['email'])
+            except User.DoesNotExist:
+                user = User(
+                    email=i['user']['email'],
+                    name=i['user']['name'],
+                    username=generate_unique_username([
+                        i['user']['email'],
+                        i['user']['name'],
+                        'authuser'
+                    ])
+                )
+                #passo = User.objects.make_random_password()
+                user.set_password('password')
+                user.save()
+                print('saved')
+            authuser = AuthorizedUsers.objects.create(user=user,company=company)
+                #authuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
-        return validated_data
+            new_company = Company.objects.get(pk=company.id)
+            #serialized = SignupSerializer(instance=new_company)
+            print(new_company)
+        return new_company
 
     def save(self, request=None):
         """rest_auth passes request so we must override to accept it"""
         return super().save()
-
-
-'''class AuthorizedUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AuthorizedUsers
-        fields = ['id', 'email', 'name']
-
-
-class AccessCoordinatorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AccessCoordinator
-        fields = ['id', 'email', 'name']
-'''
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'name']
 
 
 class PasswordSerializer(PasswordResetSerializer):

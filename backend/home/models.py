@@ -1,10 +1,8 @@
 from django.db import models
-from users.models import AccessCoordinator, AuthorizedUsers
+#from users.models import AccessCoordinator, AuthorizedUsers
 class Company(models.Model):
     name = models.CharField(max_length=255,blank=False,null=False)
     account_number = models.CharField(max_length=255,blank=False,null=False)
-    access_coordinator = models.ForeignKey(to=AccessCoordinator, on_delete=models.CASCADE)
-    authorized_users  = models.ForeignKey(to=AuthorizedUsers, on_delete=models.CASCADE)
     street_address = models.CharField(max_length=255, blank=True, null=True)
     street_address_two = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)

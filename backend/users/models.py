@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from home.models import Company
+
 
 class User(AbstractUser):
     # WARNING!
@@ -26,8 +28,9 @@ class User(AbstractUser):
         return reverse("users:detail", kwargs={"username": self.username})
 
 class AuthorizedUsers(models.Model):
-    phone = models.CharField(_("User Phone number"), blank=True, null=True, max_length=255)
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    company = models.ForeignKey(to=Company,on_delete=models.CASCADE)
+
 class AccessCoordinator(models.Model):
-    phone = models.CharField(_("User Phone number"), blank=True, null=True, max_length=255)
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    company = models.ForeignKey(to=Company,on_delete=models.CASCADE)
