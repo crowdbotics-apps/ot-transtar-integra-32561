@@ -6,7 +6,7 @@ export interface INotification{ id: number, title: string, message: string, read
 interface Notifications {
     notifications: INotification[],
     setNotifications: Dispatch<SetStateAction<INotification[]>>,
-    getNotifications: (id: number) => INotification,
+    getNotifications: (id: number) => INotification | undefined,
     deleteNotification: (id: number) => void,
     markAsRead: (id: number) => void,
     markAllAsRead: () => void,
@@ -29,8 +29,8 @@ export const NotificationsContext = createContext({} as Notifications)
 
 const NotificationsProvider: FC<{children: ReactNode}> = ({children}) => {
     const [notifications, setNotifications] = useState(dummyNotifications);
-    const [readNotifications, setReadNotifications] = useState([]);
-    const [unreadNotifications, setUnreadNotifications] = useState([]);
+    const [readNotifications, setReadNotifications] = useState([] as any);
+    const [unreadNotifications, setUnreadNotifications] = useState([] as any);
 
     useEffect(() => {
 setReadNotifications(notifications.filter(n => n.read))

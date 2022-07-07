@@ -7,4 +7,6 @@ export { default as Notification } from "./Dashboard/Notifications/Notification/
 export { default as Firms } from "./Dashboard/Firms/Firms"
 export { default as RegisterFirm } from "./Dashboard/Firms/RegisterFirm"
 export { default as Users } from "./Dashboard/Users/Users"
+export { default as NewUser } from "./Dashboard/Users/NewUser"
+export { default as EditUser } from "./Dashboard/Users/EditUser"
 export { default as Logout } from "./Logout/Logout"

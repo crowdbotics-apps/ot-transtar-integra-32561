@@ -1,11 +1,16 @@
 import * as React from "react"
+import { useNavigate } from 'react-router-dom'
 import { useStyletron } from "baseui"
 import { TableBuilder, TableBuilderColumn } from "baseui/table-semantic"
 import { StyledDarkParagraphText } from "../../../../components"
+import { useContext } from "react"
+import { AdminContext } from "../../../../context/AdminContext"
 
-const Table = ({ data }: { data: any[] }) => {
+const Table = () => {
   const [css, theme] = useStyletron()
   const [page, setPage] = React.useState(1)
+  const navigate = useNavigate();
+  const { deleteUser, filteredUsers } = useContext(AdminContext)
 
   const limit = 8
 
@@ -13,7 +18,7 @@ const Table = ({ data }: { data: any[] }) => {
     if (nextPage < 1) {
       return
     }
-    if (nextPage > Math.ceil(data.length / limit)) {
+    if (nextPage > Math.ceil(filteredUsers.length / limit)) {
       return
     }
     setPage(nextPage)
@@ -21,8 +26,10 @@ const Table = ({ data }: { data: any[] }) => {
 
   const window = () => {
     const min = (page - 1) * limit
-    return data.slice(min, min + limit)
+    return filteredUsers.slice(min, min + limit)
   }
+  const currPageCount = window().length
+  const pageStartNo = ((page - 1) * limit)
 
   return (
     <React.Fragment>
@@ -113,10 +120,13 @@ const Table = ({ data }: { data: any[] }) => {
                 style={{
                   display: "flex",
                   gap: 10,
-                  float: "right"
+                  float: "right",
                 }}
               >
                 <button
+                  onClick={() => {
+                    navigate(String(row.id));
+                  }}
                   style={{
                     display: "flex",
                     justifyContent: "center",
@@ -128,7 +138,8 @@ const Table = ({ data }: { data: any[] }) => {
                     backgroundColor: "transparent",
                     color: "#0E294B",
                     fontWeight: 500,
-                    fontSize: "12px"
+                    fontSize: "12px",
+                    cursor: "pointer"
                   }}
                 >
                   <svg
@@ -157,7 +168,13 @@ const Table = ({ data }: { data: any[] }) => {
                     backgroundColor: "transparent",
                     color: "#0E294B",
                     fontWeight: 500,
-                    fontSize: "12px"
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => {
+                    deleteUser(row.id)
+                    console.log('deleting');
+
                   }}
                 >
                   <svg
@@ -187,7 +204,7 @@ const Table = ({ data }: { data: any[] }) => {
         })}
       >
         <StyledDarkParagraphText size="14px" weight={400}>
-          Showing {limit * page - limit + 1} - {limit * page} of {data.length}{" "}
+          Showing {pageStartNo + Number(filteredUsers.length > 0)} - {pageStartNo + currPageCount} of {filteredUsers.length}{" "}
           Companies
         </StyledDarkParagraphText>
         <div
@@ -221,7 +238,7 @@ const Table = ({ data }: { data: any[] }) => {
             </svg>
             PREVIOUS
           </div>
-          {Array.from({ length: Math.ceil(data.length / limit) }, (_, i) => (
+          {Array.from({ length: Math.ceil(filteredUsers.length / limit) }, (_, i) => (
             <div
               style={{
                 ...(i + 1 === page && {
@@ -235,7 +252,7 @@ const Table = ({ data }: { data: any[] }) => {
                 cursor: "pointer"
               }}
               onClick={() =>
-                handlePageChange(i + (1 % Math.ceil(data.length / limit)))
+                handlePageChange(i + (1 % Math.ceil(filteredUsers.length / limit)))
               }
             >
               {i + 1}
@@ -244,10 +261,10 @@ const Table = ({ data }: { data: any[] }) => {
           <div
             style={{
               color:
-                page === Math.ceil(data.length / limit) ? "#AEBDCF" : "#0E294B",
+                page === Math.ceil(filteredUsers.length / limit) ? "#AEBDCF" : "#0E294B",
               marginLeft: 20,
               cursor:
-                page === Math.ceil(data.length / limit)
+                page === Math.ceil(filteredUsers.length / limit)
                   ? "not-allowed"
                   : "pointer"
             }}
@@ -265,7 +282,7 @@ const Table = ({ data }: { data: any[] }) => {
               <path
                 d="M1.05882e-07 11.1926L1.46773e-06 0.807433C1.56194e-06 0.0889902 0.892382 -0.270231 1.41536 0.23833L6.75719 5.42888C7.08094 5.7437 7.08094 6.2563 6.75719 6.57112L1.41536 11.7617C0.892381 12.2702 1.16697e-08 11.911 1.05882e-07 11.1926Z"
                 fill={
-                  page === Math.ceil(data.length / limit)
+                  page === Math.ceil(filteredUsers.length / limit)
                     ? "#AEBDCF"
                     : "#0E294B"
                 }

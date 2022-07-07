@@ -14,6 +14,7 @@ type Props = {
   data?: Data,
   isEditable?: boolean;
   onSave?: () => void
+  onSubmitData?: (data: Data) => void
 }
 type BillingInfo = {
   country: string,
@@ -136,7 +137,7 @@ const repeatArrayValues = (value: any, count: number) => {
   }
   return result;
 }
-const Registration = ({ header, data, isEditable, onSave }: Props) => {
+const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props) => {
   const [firmDetails, setFirmDetails] = useState({} as { name: string, account_no: string })
   const [billingInfo, setBillingInfo] = useState({} as BillingInfo)
   const [accessCoordinatorInputState, setAccessCoordinatorInputState] = useState([] as typeof accessCoordinatorInputField['fields'][])
@@ -214,18 +215,18 @@ const Registration = ({ header, data, isEditable, onSave }: Props) => {
   const submitForm = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (onSave) return onSave();
+    setOpenReviewModal(true)
+  }
+
+  const verifyInfo = () => {
+    setOpenReviewModal(false);
     const data = {
       firmDetails,
       billingInfo,
       accessCoordinatorInfo,
       authorizedUserInfo
     }
-    setOpenReviewModal(true)
-    console.log(data)
-  }
-
-  const verifyInfo = () => {
-    setOpenReviewModal(false);
+    onSubmitData?.(data)
     setTimeout(() => setVerificationFailed(true), 1000);
   }
   return (

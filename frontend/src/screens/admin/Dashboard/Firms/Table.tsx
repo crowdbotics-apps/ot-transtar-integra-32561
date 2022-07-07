@@ -25,7 +25,8 @@ const Table = ({
     const min = (page - 1) * limit
     return data.slice(min, min + limit)
   }
-
+  const currPageCount = window().length
+  const pageStartNo = ((page - 1) * limit)
   return (
     <React.Fragment>
       <div
@@ -137,7 +138,8 @@ const Table = ({
         })}
       >
         <StyledDarkParagraphText size="14px" weight={400}>
-          Showing {limit * page - limit + 1} - {limit * page} of {data.length}{" "}
+          Showing {pageStartNo + Number(data.length > 0)} - {pageStartNo + currPageCount} of {data.length}{" "}
+
           Companies
         </StyledDarkParagraphText>
         <div

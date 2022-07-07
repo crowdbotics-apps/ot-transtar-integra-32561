@@ -10,6 +10,7 @@ import "./index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthProvider from './context/AuthContext'
+import AdminProvider from './context/AdminContext'
 import NotificationsProvider from './context/NotificationsContext'
 
 const engine = new Styletron();
@@ -17,16 +18,18 @@ const engine = new Styletron();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-    <AuthProvider>
-      <NotificationsProvider>
-      <StyletronProvider value={engine}>
-        <BaseProvider theme={theme}>
-          <App />
-          <ToastContainer />
-        </BaseProvider>
-      </StyletronProvider>
-        </NotificationsProvider>
-    </AuthProvider>
-        </BrowserRouter>
+      <AuthProvider>
+        <AdminProvider>
+          <NotificationsProvider>
+            <StyletronProvider value={engine}>
+              <BaseProvider theme={theme}>
+                <App />
+                <ToastContainer />
+              </BaseProvider>
+            </StyletronProvider>
+          </NotificationsProvider>
+        </AdminProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
