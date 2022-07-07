@@ -4,7 +4,7 @@ import {
   StyledButton,
   StyledInput,
   addSpace
-} from "../../../../components"
+} from "@components"
 import Header from "../../Header"
 import { useStyletron } from "baseui"
 import Table from "./Table"

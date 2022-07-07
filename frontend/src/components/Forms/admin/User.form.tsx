@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { StyledButton } from '../..'
+import { StyledButton } from '@components'
 import { SectionBody, InputField } from '../broker/Registration/Registration.style'
 
 type Props = {
@@ -14,7 +14,6 @@ type Data = {
     title: string;
     email: string;
     sector: string;
-
 }
 const User = ({ handleInputChange, data, isEdit, onSubmit }: Props) => {
 
