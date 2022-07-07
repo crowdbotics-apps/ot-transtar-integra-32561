@@ -1,4 +1,5 @@
 import React, { MouseEvent } from "react"
+import ReactPortal from './Portal'
 import { ModalWrapper, Overlay } from "./Modals.style"
 import { useStyletron } from "baseui"
 import formLogo from "../../assets/form_logo.svg"
@@ -47,63 +48,65 @@ export const BaseModal = ({
 }: Props) => {
   const [css] = useStyletron()
   return (
-    <div
-      className={css({
-        width: "100vw",
-        height: "100vh",
-        overflowY: "scroll",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(14, 41, 75, 0.9)",
-        zIndex: 20,
-        ...(!open && { transform: "translateY(-100vh)" }),
-        transition: "all 0.2s ease"
-      })}
-    >
-      <ModalWrapper small={!!small} large={!!large}>
-        {showCloseIcon && (
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className={css({
-              position: "absolute",
-              top: "15px",
-              right: "15px",
-              cursor: "pointer",
-              opacity: 0.8,
-              ":hover": {
-                opacity: 1
-              }
-            })}
-            onClick={closeModal}
-          >
-            <path
-              d="M11 1L1 11"
-              stroke="#9B2C21"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M1 1L11 11"
-              stroke="#9B2C21"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        )}
-        <img src={formLogo} />
-        {children}
-      </ModalWrapper>
-    </div>
+    <ReactPortal>
+      <div
+        className={css({
+          width: "100vw",
+          height: "100vh",
+          overflowY: "scroll",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(14, 41, 75, 0.9)",
+          zIndex: 20,
+          ...(!open && { transform: "translateY(-100vh)" }),
+          transition: "all 0.2s ease"
+        })}
+      >
+        <ModalWrapper small={!!small} large={!!large}>
+          {showCloseIcon && (
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={css({
+                position: "absolute",
+                top: "15px",
+                right: "15px",
+                cursor: "pointer",
+                opacity: 0.8,
+                ":hover": {
+                  opacity: 1
+                }
+              })}
+              onClick={closeModal}
+            >
+              <path
+                d="M11 1L1 11"
+                stroke="#9B2C21"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M1 1L11 11"
+                stroke="#9B2C21"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          )}
+          <img src={formLogo} />
+          {children}
+        </ModalWrapper>
+      </div>
+    </ReactPortal>
   )
 }
 
@@ -227,9 +230,8 @@ export const ClientVerificationFailedModal: React.FC<{
         We were unable to verify your information. Please click Go Back to try
         again.
       </StyledDarkParagraphText>
-      <StyledDarkParagraphText weight={600}>{`Reason${
-        reasons.length > 1 ? "s" : ""
-      }:`}</StyledDarkParagraphText>
+      <StyledDarkParagraphText weight={600}>{`Reason${reasons.length > 1 ? "s" : ""
+        }:`}</StyledDarkParagraphText>
       {reasons.map(reason => (
         <StyledDarkParagraphText
           weight={400}
@@ -528,7 +530,8 @@ export const RegInfoReview: React.FC<{
       <div
         className={css({
           display: "flex",
-          gap: "105px"
+          gap: "105px",
+          justifyContent: "flex-star"
         })}
       >
         <div className={css({ flex: 1 })}>
