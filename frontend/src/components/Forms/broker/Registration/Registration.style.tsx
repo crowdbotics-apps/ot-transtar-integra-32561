@@ -58,7 +58,7 @@ export const InputField: FC<
             />
           </>
         ) : (
-          <div>
+          <div className={css({ display: 'flex', flexFlow: 'column', alignItems: 'start' })}>
             <label htmlFor={name}>{label}</label>
             <StyledInput
               className={css({

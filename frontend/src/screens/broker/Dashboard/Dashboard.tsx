@@ -8,7 +8,7 @@ type Props = {}
 export const Home = (props: Props) => {
   const [css] = useStyletron()
   return (
-    <div style={{ height: "100vh", position: "relative" }}>
+    <div style={{ height: "100vh", position: "relative", width: '100vw' }}>
       <BrokerSidebar />
       <div
         className={css({

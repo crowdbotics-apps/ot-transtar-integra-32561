@@ -8,7 +8,7 @@ interface Auth {
 export const AuthContext = createContext({} as Auth)
 
 const AuthProvider: FC<{children: ReactNode}> = ({children}) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [role, setRole] = useState<"broker" | "admin">('broker')
 
     return <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn, role}}>{ children}</AuthContext.Provider>

@@ -260,7 +260,7 @@ const Firms = (props: Props) => {
   const [filteredData, setFilteredData] = useState(sampleData);
   const [selectedFirmId, setSelectedFirmId] = useState<number | null>(null)
   const [openCSVModal, setopenCSVModal] = useState(false)
-const [openRegForm, setOpenRegForm] = useState(false)
+  const [openRegForm, setOpenRegForm] = useState(false)
   const selectedFirm = data.find(d => d.id === selectedFirmId)!
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -306,9 +306,10 @@ const [openRegForm, setOpenRegForm] = useState(false)
         <StyledInput style={{ flex: 2 }} type="text" placeholder="Search" onChange={handleSearch} />
         <div style={{ flex: 1.2 }}>
           <StyledCustomSelect
-            options={["Billing Information", "Registered Firms", "User Access"]}
+            options={[{ name: "Billing Information", value: 'billing' }, { name: "Registered Firms", value: 'firms' }, { name: "User Access", value: 'user' }]}
             placeholder="Select One"
-            onSelect={e => {}}
+            onSelect={e => { }}
+            value=""
             name=""
           />
         </div>

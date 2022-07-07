@@ -39,7 +39,7 @@ export const addSpace = (
 };
 
 export const StyledHeaderText = styled<TextProps, any>("h1", ({ size, color, weight }) => ({
-  color: color || "white" ,
+  color: color || "white",
   fontSize: size || "38px",
   letterSpacing: "1px",
   fontWeight: weight || 700,
@@ -81,12 +81,12 @@ export const StyledInput = styled("input", () => ({
   },
   border: "1px solid rgba(139, 139, 139, 1)",
   padding: "15px",
-  margin: "10px auto",
+  margin: "10px 0",
 }));
 
 export const StyledCustomSelect: React.FC<{
   placeholder: string;
-  options: {value: string, name: string}[];
+  options: { value: string, name: string }[];
   onSelect: (e: ChangeEvent<HTMLInputElement>) => void;
   name: string;
   value: string,
@@ -110,7 +110,7 @@ export const StyledCustomSelect: React.FC<{
         width: "100%",
         height: "fit-content",
         position: "relative",
-              gridArea: "input",
+        gridArea: "input",
 
       })}
     >
@@ -119,10 +119,10 @@ export const StyledCustomSelect: React.FC<{
           position: "relative",
           width: "100%",
           height: "fit-content",
-          
+
         })}
         onClick={(e) => {
-          if((others as any).readOnly) return
+          if ((others as any).readOnly) return
           setOptionsOpen(!optionsOpen);
           console.log("clicked");
         }}
@@ -154,8 +154,8 @@ export const StyledCustomSelect: React.FC<{
           />
         </svg>
       </div>
-{/**handle clickaway */}
-     {optionsOpen && <div onClick={() => setOptionsOpen(false)} className={ css({position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0, 0, 0, .02)', zIndex: 1})}/>}
+      {/**handle clickaway */}
+      {optionsOpen && <div onClick={() => setOptionsOpen(false)} className={css({ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0, 0, 0, .02)', zIndex: 1 })} />}
 
       <div
         className={css({
@@ -168,32 +168,32 @@ export const StyledCustomSelect: React.FC<{
           display: optionsOpen ? "flex" : "none",
           flexFlow: "column",
           border: "1px solid rgba(139, 139, 139, 1)",
-          zIndex: 1, 
+          zIndex: 1,
           maxHeight: '300px',
           overflowY: 'auto'
-          
+
 
         })}
       >
         {options.map((opt) => (
           <StyledInput
             onClick={() => {
-            onSelect({target: {name, value: opt.name}} as any)
+              onSelect({ target: { name, value: opt.name } } as any)
               setOptionsOpen(false);
             }}
             readOnly
             value={opt.name}
-            className={inputStyle + ' ' +  css({
+            className={inputStyle + ' ' + css({
               border: 'none',
               outline: 'none',
-              margin: 0, 
+              margin: 0,
               ':not(:last-child)': {
                 borderBottom: "1px solid rgba(139, 139, 139, 1)",
               },
               ':hover': {
                 background: "rgba(241, 241, 241, 1)"
               },
-              ...(value === opt.name && {background: 'rgba(241, 241, 241, 1) !important'})
+              ...(value === opt.name && { background: 'rgba(241, 241, 241, 1) !important' })
             })}
           />
         ))}
@@ -201,16 +201,16 @@ export const StyledCustomSelect: React.FC<{
       {/* )} */}
     </div>
   );
-  };
+};
 
 
-export const StyledCheckbox: React.FC<{checked: boolean, onChange: (e: ChangeEvent<HTMLInputElement>) => void}> = ({checked, onChange}) => {
-    const [ css ] = useStyletron();
+export const StyledCheckbox: React.FC<{ checked: boolean, onChange: (e: ChangeEvent<HTMLInputElement>) => void }> = ({ checked, onChange }) => {
+  const [css] = useStyletron();
   return <input type="checkbox" checked={checked} onChange={onChange} className={css({
-      width: '20px',
-      height: '20px'
-    })}/>
-  }
+    width: '20px',
+    height: '20px'
+  })} />
+}
 
 export const StyledDateInput: React.FC<{ placeholder: string }> = ({
   placeholder,

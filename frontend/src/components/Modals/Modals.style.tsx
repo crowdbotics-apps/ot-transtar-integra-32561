@@ -15,7 +15,7 @@ export const Overlay = styled("div", () => ({
 }))
 
 export const ModalWrapper = styled(Wrapper, ({ small, large }: ModalProps) => ({
-  width: small ? "fit-content" : "700px",
+  width: "fit-content",
   maxWidth: small ? "360px" : large ? "calc(100vw - 100px)" : "450px",
   minHeight: small ? "350px" : large ? "700px" : "500px",
   maxHeight: "calc(100vh - 100px)",
