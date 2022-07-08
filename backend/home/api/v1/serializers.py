@@ -43,7 +43,8 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
-'read_only': True
+'read_only': True,
+                'allow_blank': True,
             }
         }
 
@@ -66,7 +67,8 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
-'read_only':True
+'read_only':True,
+                'allow_blank': True,
             }
         }
 
