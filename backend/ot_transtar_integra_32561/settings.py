@@ -107,7 +107,7 @@ WSGI_APPLICATION = 'ot_transtar_integra_32561.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'dba.sqlite3'),
     }
 }
 
