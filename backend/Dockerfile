@@ -28,7 +28,6 @@ WORKDIR /opt/webapp
 ENV PATH=/root/.local/bin:$PATH
 ARG SECRET_KEY 
 RUN python3 manage.py collectstatic --no-input
-RUN echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('ezekiel', 'ezekiel.okoduwa@crowdbotics.com', 'passwordadmin')" | python3 manage.py shell
 
 # Run the image as a non-root user
 RUN adduser --disabled-password --gecos "" django
