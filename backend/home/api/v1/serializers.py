@@ -42,7 +42,8 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
                 'allow_blank': False,
             },
             'company': {
-                'required': False
+                'required': False,
+                'read_only':True,
             }
         }
 
@@ -65,6 +66,7 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
+                'read_only':True,
             }
         }
 
@@ -95,12 +97,12 @@ class SignupSerializer(serializers.ModelSerializer):
                 'required': True,
                 'allow_blank': False,
             },
-            'access_coordinators':{
+            'accesscoordinators_set':{
                 'allow_blank': True,
                 'required': False,
 
             },
-            'authorized_users':{
+            'authorizedusers_set':{
                 'allow_blank': True,
                 'required': False
             }
@@ -157,7 +159,7 @@ class SignupSerializer(serializers.ModelSerializer):
             new_company = Company.objects.get(pk=company.id)
             #serialized = SignupSerializer(instance=new_company)
             print(new_company)
-        return new_company
+        return company
 
     def save(self, request=None):
         """rest_auth passes request so we must override to accept it"""
