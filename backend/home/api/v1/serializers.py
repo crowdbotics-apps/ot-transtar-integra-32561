@@ -97,12 +97,12 @@ class SignupSerializer(serializers.ModelSerializer):
                 'required': True,
                 'allow_blank': False,
             },
-            'access_coordinators':{
+            'accesscoordinators_set':{
                 'allow_blank': True,
                 'required': False,
 
             },
-            'authorized_users':{
+            'authorizedusers_set':{
                 'allow_blank': True,
                 'required': False
             }
