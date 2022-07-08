@@ -44,7 +44,6 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
             'company': {
                 'required': False,
 'read_only': True,
-                'allow_blank': True,
             }
         }
 
@@ -68,7 +67,6 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             'company': {
                 'required': False,
 'read_only':True,
-                'allow_blank': True,
             }
         }
 
@@ -131,7 +129,7 @@ class SignupSerializer(serializers.ModelSerializer):
                 )
                 user.set_password('password')
                 user.save()
-            accessuser = AccessCoordinator.objects.create(user=user,company=company)
+            accessuser = AccessCoordinator.objects.create(user=user,company=company.id)
                 #accessuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
@@ -154,7 +152,7 @@ class SignupSerializer(serializers.ModelSerializer):
                 user.set_password('password')
                 user.save()
                 print('saved')
-            authuser = AuthorizedUsers.objects.create(user=user,company=company)
+            authuser = AuthorizedUsers.objects.create(user=user,company=company.id)
                 #authuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
