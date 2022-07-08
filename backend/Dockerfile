@@ -28,7 +28,7 @@ WORKDIR /opt/webapp
 ENV PATH=/root/.local/bin:$PATH
 ARG SECRET_KEY 
 RUN python3 manage.py makemigrations
-RUN RUN python3 manage.py migrate
+RUN python3 manage.py migrate
 RUN python3 manage.py collectstatic --no-input
 
 # Run the image as a non-root user
