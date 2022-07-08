@@ -16,7 +16,6 @@ import NotificationsProvider from './context/NotificationsContext'
 const engine = new Styletron();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <AdminProvider>
@@ -31,5 +30,4 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </AdminProvider>
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
 );
