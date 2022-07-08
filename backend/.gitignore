@@ -1,6 +1,6 @@
 *.pyc
 env/
 .terraform
-.env
+#.env
 staticfiles/
 postgres-data/
