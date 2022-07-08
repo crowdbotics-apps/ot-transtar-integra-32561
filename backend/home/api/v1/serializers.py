@@ -156,9 +156,9 @@ class SignupSerializer(serializers.ModelSerializer):
                 #authuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
-            new_company = Company.objects.get(pk=company.id)
+            #new_company = Company.objects.get(pk=company.id)
             #serialized = SignupSerializer(instance=new_company)
-            print(new_company)
+            #print(new_company)
         return company
 
     def save(self, request=None):
