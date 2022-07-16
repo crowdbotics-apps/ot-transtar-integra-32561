@@ -2,9 +2,9 @@ import * as React from "react"
 import { useNavigate } from 'react-router-dom'
 import { useStyletron } from "baseui"
 import { TableBuilder, TableBuilderColumn } from "baseui/table-semantic"
-import { StyledDarkParagraphText } from "../../../../components"
+import { StyledDarkParagraphText } from "components"
 import { useContext } from "react"
-import { AdminContext } from "../../../../context/AdminContext"
+import { AdminContext } from "context/AdminContext"
 
 const Table = () => {
   const [css, theme] = useStyletron()

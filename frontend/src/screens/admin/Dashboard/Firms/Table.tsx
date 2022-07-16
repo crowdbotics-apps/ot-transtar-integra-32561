@@ -2,19 +2,21 @@ import React from "react"
 import { useStyletron } from "baseui"
 import { TableBuilder, TableBuilderColumn } from "baseui/table-semantic"
 import { addSpace, StyledDarkParagraphText } from "../../../../components"
-
+import { PulseLoader } from 'react-spinners'
 const Table = ({
   data,
+  loading,
   onClick
 }: {
   data: any[],
-  onClick: (id: number) => void
+  onClick: (id: number) => void;
+  loading: boolean
 }) => {
   const [css, theme] = useStyletron()
   const [page, setPage] = React.useState(1)
   const limit = 8
 
-  const handlePageChange = nextPage => {
+  const handlePageChange = (nextPage: number) => {
     if (nextPage < 1 || nextPage > Math.ceil(data.length / limit)) {
       return
     }
@@ -29,15 +31,8 @@ const Table = ({
   const pageStartNo = ((page - 1) * limit)
   return (
     <React.Fragment>
-      <div
-        className={css({
-          display: "flex",
-          justifyContent: "space-between",
-          paddingTop: theme.sizing.scale600,
-          paddingBottom: theme.sizing.scale600
-        })}
-      ></div>
-      <div className={css({ height: "500px" })}>
+      {addSpace('vert', '40px')}
+      <div className={css({ height: "500px", border: '1px solid #0E294B' })}>
         <TableBuilder
           data={window()}
           overrides={{
@@ -122,7 +117,19 @@ const Table = ({
             )}
           </TableBuilderColumn>
         </TableBuilder>
-        {!data.length && (
+        {loading && !data.length &&
+          <div
+            style={{
+              height: 300,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '20px'
+            }}>
+            Loading Firms <PulseLoader />
+          </div>}
+        {!data.length && !loading && (
           <StyledDarkParagraphText>
             {addSpace("vert", "20px")}
             No results found
