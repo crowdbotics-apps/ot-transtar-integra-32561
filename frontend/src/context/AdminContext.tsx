@@ -1,4 +1,5 @@
 import { createContext, Dispatch, SetStateAction, FC, ReactNode, useState } from 'react'
+import { Data } from 'components/Forms/broker/Registration/Registration.form'
 export type User = {
     full_name: string,
     phone: string;
@@ -7,16 +8,21 @@ export type User = {
     sector: string;
     id: number
 }
+type Firm = Data & { id: number }
 interface Admin {
     users: User[],
     filteredUsers: User[],
     setFilteredUsers: Dispatch<SetStateAction<User[]>>
+    firms: Firm[],
+    filteredFirms: Firm[],
+    setFilteredFirms: Dispatch<SetStateAction<Firm[]>>
+    setFirms: Dispatch<SetStateAction<Firm[]>>
     getUser: (id: number) => User | undefined
     deleteUser: (id: number) => void
     editUser: (id: number, user: Partial<User>) => void,
     addUser: (user: User) => void
 }
-const sampleData = [
+const sampleUsersData = [
     {
         full_name: "John Dawanson",
         title: "Mr",
@@ -213,8 +219,10 @@ const sampleData = [
 export const AdminContext = createContext({} as Admin)
 
 const AdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [users, setUsers] = useState(sampleData)
-    const [filteredUsers, setFilteredUsers] = useState(sampleData)
+    const [users, setUsers] = useState(sampleUsersData)
+    const [filteredUsers, setFilteredUsers] = useState(sampleUsersData)
+    const [firms, setFirms] = useState([] as Firm[])
+    const [filteredFirms, setFilteredFirms] = useState([] as Firm[])
 
     const getUser = (id: number) => users.find(user => user.id === id);
     const editUser = (id: number, data: Partial<User>) => {
@@ -232,7 +240,7 @@ const AdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setFilteredUsers([{ ...user, id: nextId }, ...filteredUsers,])
     }
     return <AdminContext.Provider value={{
-        users, getUser, editUser, deleteUser, filteredUsers, setFilteredUsers, addUser
+        users, getUser, editUser, deleteUser, filteredUsers, setFilteredUsers, addUser, firms, filteredFirms, setFilteredFirms, setFirms
     }}>{children}</AdminContext.Provider>
 }
 

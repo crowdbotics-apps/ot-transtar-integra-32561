@@ -16,18 +16,18 @@ import NotificationsProvider from './context/NotificationsContext'
 const engine = new Styletron();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <BrowserRouter>
-      <AuthProvider>
-        <AdminProvider>
-          <NotificationsProvider>
-            <StyletronProvider value={engine}>
-              <BaseProvider theme={theme}>
-                <App />
-                <ToastContainer />
-              </BaseProvider>
-            </StyletronProvider>
-          </NotificationsProvider>
-        </AdminProvider>
-      </AuthProvider>
-    </BrowserRouter>
+  <BrowserRouter>
+    <AuthProvider>
+      <AdminProvider>
+        <NotificationsProvider>
+          <StyletronProvider value={engine}>
+            <BaseProvider theme={theme}>
+              <App />
+              <ToastContainer autoClose={1000} />
+            </BaseProvider>
+          </StyletronProvider>
+        </NotificationsProvider>
+      </AdminProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );
