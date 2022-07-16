@@ -1,272 +1,53 @@
-import React, { ChangeEvent, useState } from "react"
+import React, { ChangeEvent, useState, useContext, useEffect } from "react"
 import { Outlet, useNavigate } from 'react-router-dom'
 import { DashboardWrapper } from "../../Dashboard/Dashboard.style"
 import {
   StyledButton,
   StyledInput,
   StyledCustomSelect
-} from "../../../../components"
-import { RegInfoReview, RunCSVModal } from "../../../../components/Modals/Modals"
+} from "components"
+import { RegInfoReview, RunCSVModal } from "components/Modals/Modals"
 import Header from "../../Header"
 import { useStyletron } from "baseui"
 import Table from "./Table"
-import RegistrationForm from "../../../../components/Forms/broker/Registration/Registration.form"
-
+import { AdminContext } from 'context/AdminContext'
+import Api from 'Api'
+import { FirmData } from "types"
+import { Data } from "components/Forms/broker/Registration/Registration.form"
 type Props = {}
-const sampleData = [
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 1
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: 'Canada', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 2
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: 'Canada', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 3
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: 'Canada', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 4
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 5
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 6
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 7
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 8
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 9
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 10
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 11
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 12
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 13
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 14
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 15
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 16
-  },
-  {
-    firmDetails: { name: 'Company Name', account_no: '123456789' },
-    billingInfo: {
-      country: '', street_1: '', street_2: '', province_or_state: '', city: '', zip_code: '',
-    }, accessCoordinatorInfo: [{
-      name: 'Coordinator Name',
-      email: 'coordinator@example.com',
-      send_verification: true
-    }], authorizedUserInfo: [{
-      name: 'authorized User Name',
-      email: 'authorized@example.com',
-      send_verification: true
-    }], id: 17
-  },
-]
+
 const Firms = (props: Props) => {
   const navigate = useNavigate()
   const [css] = useStyletron()
-  const [data, setData] = useState(sampleData);
-  const [filteredData, setFilteredData] = useState(sampleData);
   const [selectedFirmId, setSelectedFirmId] = useState<number | null>(null)
   const [openCSVModal, setopenCSVModal] = useState(false)
   const [openRegForm, setOpenRegForm] = useState(false)
-  const selectedFirm = data.find(d => d.id === selectedFirmId)!
+  const { setFirms, setFilteredFirms, filteredFirms, firms } = useContext(AdminContext)
+  const selectedFirm = firms.find(d => d.id === selectedFirmId)!
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    setLoading(true);
+    (async () => {
+      const data = await Api.get('company/');
+      const firmData: (Data & { id: number })[] = data.map((d: FirmData) => ({
+        firmDetails: { name: d.name, account_number: d.account_number },
+        billingInfo: { country: d.country, state: d.state, city: d.city, postal: d.postal, street_address: d.street_address, street_address_two: d.street_address_two },
+        accessCoordinatorInfo: d.accesscoordinator_set,
+        authorizedUserInfo: d.authorizedusers_set,
+        id: d.id
+      })).reverse()
+      setFirms(firmData);
+      setFilteredFirms(firmData);
+      setLoading(false)
+
+    })()
+  }, [])
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
-    const result = data.filter(d => d.firmDetails.name.toLowerCase().startsWith(value));
-    setFilteredData(result)
+    const result = firms.filter(d => d.firmDetails.name.toLowerCase().split(" ").some(n => n.startsWith(value)));
+
+    setFilteredFirms(result)
   }
   return (
     <DashboardWrapper style={{ paddingTop: "120px" }}>
@@ -316,9 +97,10 @@ const Firms = (props: Props) => {
         <StyledButton style={{ width: 260 }} onClick={() => setopenCSVModal(true)}>export</StyledButton>
       </div>
       <Table
-        data={filteredData.map(d => ({
+        loading={loading}
+        data={filteredFirms.map(d => ({
           name: d.firmDetails.name,
-          account: d.firmDetails.account_no,
+          account: d.firmDetails.account_number,
           id: d.id
         }))}
         onClick={id => setSelectedFirmId(id)}

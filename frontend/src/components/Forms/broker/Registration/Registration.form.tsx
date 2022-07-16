@@ -9,20 +9,21 @@ import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText, Styled
 import { useStyletron } from "baseui";
 import { RegInfoReview, BrokerVerificationFailedModal } from '../../../Modals/Modals'
 import { CANADA_PROVINCES, US_STATES } from '../../../../utils'
+import { FirmData } from 'types'
 type Props = {
   header?: string,
   data?: Data,
   isEditable?: boolean;
   onSave?: () => void
-  onSubmitData?: (data: Data) => void
+  onSubmitData?: (data: FirmData) => Promise<any>
 }
 type BillingInfo = {
   country: string,
-  street_1: string,
-  street_2: string,
-  province_or_state: string,
+  street_address: string,
+  street_address_two: string,
+  state: string,
   city: string;
-  zip_code: string;
+  postal: string;
 }
 type AccessCoordInfo = {
   name: string,
@@ -55,14 +56,14 @@ const getBillingInputFields = (state_options: { name: string, value: string }[])
         label: "Street Address Line 2 (optional)",
         placeholder: "Please enter Street Address Line 2",
         type: "text",
-        name: 'street_2'
+        name: 'street_address_two'
       },
       {
         label: "Province/State",
         placeholder: "Please select Province/State",
         type: "select",
         options: state_options,
-        name: 'province_or_state'
+        name: 'state'
       },
       {
         label: "City",
@@ -74,13 +75,13 @@ const getBillingInputFields = (state_options: { name: string, value: string }[])
         label: "Street Address",
         placeholder: "Please enter Street Address",
         type: "text",
-        name: 'street_1'
+        name: 'street_address'
       },
       {
         label: "Postal/ZIP Code",
         placeholder: "Please enter Postal/ZIP Code",
         type: "text",
-        name: 'zip_code'
+        name: 'postal'
       }
     ]
   }
@@ -125,10 +126,10 @@ const initUserInfo = {
   name: '', email: '', send_verification: true
 }
 export type Data = {
-  firmDetails: { name: string, account_no: string },
+  firmDetails: { name: string, account_number: string },
   billingInfo: BillingInfo,
   accessCoordinatorInfo: AccessCoordInfo[];
-  authorizedUserInfo: AuthorizedUserInfo[]
+  authorizedUserInfo: AuthorizedUserInfo[],
 }
 const repeatArrayValues = (value: any, count: number) => {
   let result: any[] = [];
@@ -138,7 +139,7 @@ const repeatArrayValues = (value: any, count: number) => {
   return result;
 }
 const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props) => {
-  const [firmDetails, setFirmDetails] = useState({} as { name: string, account_no: string })
+  const [firmDetails, setFirmDetails] = useState({} as { name: string, account_number: string })
   const [billingInfo, setBillingInfo] = useState({} as BillingInfo)
   const [accessCoordinatorInputState, setAccessCoordinatorInputState] = useState([] as typeof accessCoordinatorInputField['fields'][])
   const [authorizedUserInputState, setAuthorizedUserInputState] = useState([] as typeof authorizedUserInputField['fields'][])
@@ -194,8 +195,8 @@ const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props)
 
   }
   const handleBillingInputChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement>): void => {
-    // set province_or_state to empty if country changes
-    setBillingInfo(b => ({ ...b, [name]: value, ...(name === 'country' && value !== billingInfo[name] && { province_or_state: '' }) }))
+    // set state to empty if country changes
+    setBillingInfo(b => ({ ...b, [name]: value, ...(name === 'country' && value !== billingInfo[name] && { state: '' }) }))
   }
 
   const handleAccessCoordinatorChange = (e: ChangeEvent<HTMLInputElement>, index: number): void => {
@@ -218,16 +219,19 @@ const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props)
     setOpenReviewModal(true)
   }
 
-  const verifyInfo = () => {
+  const verifyInfo = async () => {
     setOpenReviewModal(false);
-    const data = {
-      firmDetails,
-      billingInfo,
-      accessCoordinatorInfo,
-      authorizedUserInfo
+
+    const data: FirmData = {
+      ...firmDetails,
+      ...billingInfo,
+      accesscoordinator_set: accessCoordinatorInfo,
+      authorizedusers_set: authorizedUserInfo
     }
-    onSubmitData?.(data)
-    setTimeout(() => setVerificationFailed(true), 1000);
+    const response = await onSubmitData?.(data)
+    if (!response) {
+      setVerificationFailed(true)
+    }
   }
   return (
     <Wrapper>
@@ -246,11 +250,11 @@ const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props)
         />
         <InputField
           type="text"
-          name="account_no"
+          name="account_number"
           placeholder="Enter Account Number Provided by Odyssey"
           label="Account Number"
           onChange={handleFirmDetailsChange}
-          value={firmDetails.account_no}
+          value={firmDetails.account_number}
           readOnly={isEditable !== undefined}
         />
       </SectionBody>
