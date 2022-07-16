@@ -264,8 +264,10 @@ export const StyledDateInput: React.FC<{ placeholder: string }> = ({
     </div>
   );
 };
-export const StyledPasswordInput: React.FC<{ placeholder: string }> = ({
+export const StyledPasswordInput: React.FC<{ placeholder: string, value: string, onChange: (e: ChangeEvent<HTMLInputElement>) => void }> = ({
   placeholder,
+  onChange,
+  value
 }) => {
   const [style] = useStyletron();
   return (
@@ -280,6 +282,9 @@ export const StyledPasswordInput: React.FC<{ placeholder: string }> = ({
         type="password"
         placeholder={placeholder}
         style={{ paddingRight: 35 }}
+        onChange={onChange}
+        name="password"
+        value={value}
       />
       <svg
         width="20"
@@ -321,5 +326,9 @@ export const StyledButton = styled<Partial<ButtonProps>, "button">(
     cursor: "pointer",
     fontSize: "14px",
     fontWeight: 500,
+    ":disabled": {
+      opacity: .5,
+      cursor: 'not-allowed'
+    }
   })
 );

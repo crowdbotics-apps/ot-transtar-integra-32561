@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { StyledButton } from '@components'
+import { StyledButton } from 'components'
 import { SectionBody, InputField } from '../broker/Registration/Registration.style'
 
 type Props = {

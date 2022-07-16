@@ -11,5 +11,5 @@ export type FirmData = {
   state: string;
   postal: string;
   country: string;
-  id: number
+  id?: number
 }

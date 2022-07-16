@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent } from "react"
+import React, { ChangeEvent, FC, MouseEvent, useState } from "react"
 import FormWrapper from "../../FormWrapper/FormWrapper"
 import { useStyletron } from "baseui"
 import { StyledInput } from "../.."
@@ -11,11 +11,18 @@ import {
 } from "../.."
 import { useNavigate } from "react-router-dom"
 import { InputField } from "../broker/Registration/Registration.style"
-
-const LoginForm: FC<{ onSubmit?: (e: MouseEvent<HTMLButtonElement>) => void }> =
-  ({ onSubmit }) => {
+import { PulseLoader } from 'react-spinners'
+const LoginForm: FC<{ onSubmit: (e: MouseEvent<HTMLButtonElement>, data: Record<string, any>) => void, loading: boolean }> =
+  ({ onSubmit, loading }) => {
     const [css, theme] = useStyletron()
     const navigate = useNavigate()
+    const [data, setData] = useState({ "email": "", password: "" })
+    const isValidData = (Object.keys(data) as ["email", "password"]).every(key => !!data[key]?.length);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target
+      setData({ ...data, [name]: value })
+    }
     return (
       <FormWrapper
         style={{ width: "70%", maxWidth: "370px", minWidth: "350px" }}
@@ -24,6 +31,7 @@ const LoginForm: FC<{ onSubmit?: (e: MouseEvent<HTMLButtonElement>) => void }> =
           <StyledHeaderText
             size="30px"
             weight={700}
+            color="rgba(14, 41, 75, 1)"
             className={css({
               margin: "50px 0 30px",
               letterSpacing: 0,
@@ -32,15 +40,14 @@ const LoginForm: FC<{ onSubmit?: (e: MouseEvent<HTMLButtonElement>) => void }> =
           >
             Login
           </StyledHeaderText>
-          <StyledInput type="email" placeholder="Enter Email Address" />
-
-          <StyledPasswordInput placeholder="Enter Password" />
+          <StyledInput onChange={handleChange} type="email" name="email" placeholder="Enter Email Address" value={data.email} />
+          <StyledPasswordInput value={data.password} onChange={handleChange} placeholder="Enter Password" />
           <StyledDarkParagraphText weight={600} size="14px" align="right">
             <strong>Forgot Password</strong>
           </StyledDarkParagraphText>
         </div>
         {addSpace()}
-        <StyledButton onClick={onSubmit}>login</StyledButton>
+        <StyledButton disabled={loading || !isValidData} onClick={(e) => onSubmit(e, data)}>{loading ? <PulseLoader color="#ffffff" size={10} /> : 'Login'}</StyledButton>
         {addSpace("vert", "-60px")}
         <StyledDarkParagraphText size="14px">
           Not registered? Sign up{" "}

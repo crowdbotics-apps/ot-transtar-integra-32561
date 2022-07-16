@@ -1,20 +1,20 @@
 import React, { useState } from "react"
 import { DashboardWrapper } from "../Dashboard.style"
-import { StyledDarkParagraphText, StyledButton } from "../../../../components"
+import { StyledDarkParagraphText, StyledButton } from "components"
 import RegistrationForm, {
   Data
-} from "../../../../components/Forms/broker/Registration/Registration.form"
+} from "components/Forms/broker/Registration/Registration.form"
 type Props = {}
 
 const data: Data = {
-  firmDetails: { name: "Lisa Scotland", account_no: "0987654342" },
+  firmDetails: { name: "Lisa Scotland", account_number: "0987654342" },
   billingInfo: {
     country: "USA",
-    street_1: "",
-    street_2: "",
-    province_or_state: "FL",
+    street_address: "",
+    street_address_two: "",
+    state: "Florida",
     city: "Miami",
-    zip_code: "30106"
+    postal: "30106"
   },
   accessCoordinatorInfo: [
     { name: "Emmanuel", email: "emmanuel@gmail.com", send_verification: true },

@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, MouseEvent, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Wrapper,
@@ -8,11 +8,12 @@ import LoginForm from "../../../components/Forms/common/Login.form"
 import { AuthContext } from "../../../context/AuthContext"
 import { useStyletron } from "baseui"
 import { StyledHeaderText, StyledParagraphText } from "../../../components"
-
+import Api from 'Api'
 const LoginScreen = () => {
   const [css] = useStyletron()
   const navigate = useNavigate()
   const { setIsLoggedIn } = useContext(AuthContext)
+  const [loading, setLoading] = useState(false)
   return (
     <Wrapper>
       <Overlay />
@@ -32,11 +33,17 @@ const LoginScreen = () => {
       </div>
       <div className={css({ flex: 1, zIndex: 1, alignSelf: "center" })}>
         <LoginForm
-          onSubmit={e => {
-            e.preventDefault()
-            setIsLoggedIn(true)
-            navigate("/dashboard")
+          onSubmit={async (e: MouseEvent<HTMLButtonElement>, data: any) => {
+            setLoading(true)
+            e.preventDefault();
+            const res = await Api.create('login/', data);
+            setLoading(false)
+            if (res) {
+              setIsLoggedIn(true)
+              navigate("/dashboard")
+            }
           }}
+          loading={loading}
         />
       </div>
     </Wrapper>

@@ -1,5 +1,5 @@
 import React, { MouseEvent } from "react"
-import ReactPortal from './Portal'
+import ReactPortal from '../Portal'
 import { ModalWrapper, Overlay } from "./Modals.style"
 import { useStyletron } from "baseui"
 import formLogo from "../../assets/form_logo.svg"
@@ -493,15 +493,15 @@ const getReviewInfoLabel = (key: string) => {
   switch (key) {
     case "country":
       return "Country"
-    case "province_or_state":
+    case "state":
       return "Province/State"
-    case "street_1":
+    case "street_address":
       return "Company Street Address 1"
-    case "street_2":
+    case "street_address_two":
       return "Company Street Address 2"
     case "city":
       return "City"
-    case "zip_code":
+    case "postal":
       return "Postal/ZIP Code"
   }
 }
@@ -541,7 +541,7 @@ export const RegInfoReview: React.FC<{
             </StyledDarkParagraphText>
             {addSpace("vert", "20px")}
             <StyledDarkParagraphText weight={400} size="14 px">
-              Company Name: {data.firmDetails.name}
+              <span style={{ fontWeight: 500 }}>Company Name</span>: {data.firmDetails.name}
             </StyledDarkParagraphText>
           </div>
           <div style={{ marginTop: 30 }}>
@@ -557,7 +557,7 @@ export const RegInfoReview: React.FC<{
               "Postal/ZIP Code"
             ].map(item => {
               const matchingItem = Object.keys(data.billingInfo)
-                .map(key => ({ key, value: data.billingInfo[key] }))
+                .map(key => ({ key, value: data.billingInfo[key as keyof typeof data.billingInfo] }))
                 .find(objItem => getReviewInfoLabel(objItem.key) === item)
               return (
                 <div
@@ -575,7 +575,7 @@ export const RegInfoReview: React.FC<{
                     }
                   })}
                 >
-                  {item}: {matchingItem?.value || "Not Specified"}
+                  <span style={{ fontWeight: 500 }}>{item}</span>: {matchingItem?.value || "Not Specified"}
                 </div>
               )
             })}
@@ -587,6 +587,7 @@ export const RegInfoReview: React.FC<{
             <StyledDarkParagraphText weight={700} size="20px">
               Access Coordinator(s)
             </StyledDarkParagraphText>
+            {!data.accessCoordinatorInfo?.length && <StyledDarkParagraphText>No access coordinators</StyledDarkParagraphText>}
             {data.accessCoordinatorInfo.map((info, index) => (
               <>
                 <div
@@ -603,7 +604,7 @@ export const RegInfoReview: React.FC<{
                     textTransform: "capitalize"
                   })}
                 >
-                  Name: {info.name}
+                  <span style={{ fontWeight: 500 }}>Name</span>: {info.name}
                 </div>
                 <div
                   className={css({
@@ -619,7 +620,7 @@ export const RegInfoReview: React.FC<{
                     textTransform: "capitalize"
                   })}
                 >
-                  Email Address : {info.email}
+                  <span style={{ fontWeight: 500 }}>Email Address</span> : {info.email}
                 </div>
               </>
             ))}
@@ -628,6 +629,8 @@ export const RegInfoReview: React.FC<{
             <StyledDarkParagraphText weight={700} size="20px">
               Authorized User(s)
             </StyledDarkParagraphText>
+            {!data.authorizedUserInfo?.length && <StyledDarkParagraphText>No authorized users</StyledDarkParagraphText>}
+
             {data.authorizedUserInfo.map((info, index) => (
               <>
                 <div
@@ -644,7 +647,7 @@ export const RegInfoReview: React.FC<{
                     textTransform: "capitalize"
                   })}
                 >
-                  Name : {info.name}
+                  <span style={{ fontWeight: 500 }}>Name</span> : {info.name}
                 </div>
                 <div
                   className={css({
@@ -660,7 +663,7 @@ export const RegInfoReview: React.FC<{
                     textTransform: "capitalize"
                   })}
                 >
-                  Email Address: {info.email}
+                  <span style={{ fontWeight: 500 }}>Email Address</span>: {info.email}
                 </div>
               </>
             ))}
