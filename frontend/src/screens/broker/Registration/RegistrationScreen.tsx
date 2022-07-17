@@ -1,17 +1,31 @@
-import React from "react"
+import { useState } from "react"
 import { useStyletron } from "baseui"
-import RegistrationForm from "../../../components/Forms/broker/Registration/Registration.form"
-import Header from "../../../components/Header/Header"
+import RegistrationForm from "components/Forms/broker/Registration/Registration.form"
+import Header from "components/Header/Header"
 import { Banner } from "./Registration.style"
 import {
   StyledHeaderText,
   StyledDarkParagraphText,
   addSpace
-} from "../../../components"
-type Props = {}
+} from "components"
+import { FirmData } from 'types'
+import Api from 'Api'
+import { toast } from 'react-toastify'
+import Spinner from 'components/Spinner'
 
-const RegistrationScreem = (props: Props) => {
-  const [css] = useStyletron()
+const RegistrationScreem = () => {
+  const [css] = useStyletron();
+  const [loading, setLoading] = useState(false)
+
+  const onSubmit = async (data: FirmData) => {
+    setLoading(true)
+    const res = await Api.create('company/', data);
+    setLoading(false);
+    if (res) {
+      toast.success('Firm registered successfully',);
+      return true
+    }
+  }
   return (
     <div
       className={css({
@@ -26,6 +40,7 @@ const RegistrationScreem = (props: Props) => {
         padding: "0 150px 150px"
       })}
     >
+      {loading && <Spinner />}
       <Header />
       {addSpace("vert", "100px")}
       <Banner>
@@ -65,7 +80,7 @@ const RegistrationScreem = (props: Props) => {
           add additional authorized users and Access Coordinator(s).
         </StyledDarkParagraphText>
       </div>
-      <RegistrationForm />
+      <RegistrationForm onSubmitData={onSubmit} />
     </div>
   )
 }

@@ -17,7 +17,7 @@ const RegisterFirm = () => {
     const res = await Api.create('/company/', data);
     setLoading(false)
     if (res) {
-      toast.success('Firm registered successfully', { autoClose: 2000, });
+      toast.success('Firm registered successfully');
       navigate(-1)
       return true;
     } else {

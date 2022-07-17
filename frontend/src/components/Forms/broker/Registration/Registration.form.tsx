@@ -5,10 +5,10 @@ import {
   SectionHeader,
   SectionBody,
 } from "./Registration.style"
-import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText, StyledHeaderText } from "../../../"
+import { addSpace, StyledButton, StyledCheckbox, StyledDarkParagraphText, StyledHeaderText } from "components"
 import { useStyletron } from "baseui";
 import { RegInfoReview, BrokerVerificationFailedModal } from '../../../Modals/Modals'
-import { CANADA_PROVINCES, US_STATES } from '../../../../utils'
+import { CANADA_PROVINCES, US_STATES, isObjectFilled } from 'utils'
 import { FirmData } from 'types'
 type Props = {
   header?: string,
@@ -225,8 +225,8 @@ const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props)
     const data: FirmData = {
       ...firmDetails,
       ...billingInfo,
-      accesscoordinator_set: accessCoordinatorInfo,
-      authorizedusers_set: authorizedUserInfo
+      accesscoordinator_set: accessCoordinatorInfo.filter(isObjectFilled),
+      authorizedusers_set: authorizedUserInfo.filter(isObjectFilled)
     }
     const response = await onSubmitData?.(data)
     if (!response) {
@@ -382,8 +382,8 @@ const Registration = ({ header, data, isEditable, onSave, onSubmitData }: Props)
       <RegInfoReview data={{
         firmDetails,
         billingInfo,
-        accessCoordinatorInfo,
-        authorizedUserInfo
+        accessCoordinatorInfo: accessCoordinatorInfo.filter(isObjectFilled),
+        authorizedUserInfo: authorizedUserInfo.filter(isObjectFilled)
       }} open={openReviewModal} closeModal={() => setOpenReviewModal(false)} onSubmit={verifyInfo} showButton showCloseIcon={false} />
       <BrokerVerificationFailedModal open={verificationFailed} closeModal={() => setVerificationFailed(false)} />
     </Wrapper>

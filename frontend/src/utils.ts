@@ -107,3 +107,8 @@ export const CANADA_PROVINCES = [
     value: "YT"
   }
 ]
+
+export const isObjectFilled = (obj: Record<string, any>) => {
+  return !!Object.keys(obj).length && Object.keys(obj).every(key => !['', null, undefined].includes(obj[key]))
+}
+
