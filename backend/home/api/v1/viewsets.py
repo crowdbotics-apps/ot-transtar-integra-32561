@@ -77,11 +77,8 @@ class EmployeeViewSet(ModelViewSet):
     http_method_names = ["post","get","patch","delete"]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name','email']
-
-    def get_permissions(self):
-        if self.action == 'list':
-            self.permissions_classes = [permissions.IsAdminUser]
-        return [permission() for permission in self.permissions_classes]
+    permissions_classes = [permissions.IsAdminUser]
+    
 
 
 class NotificationViewSet(ModelViewSet):

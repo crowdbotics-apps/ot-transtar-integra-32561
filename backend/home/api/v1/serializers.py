@@ -33,14 +33,36 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
-                'read_only':True,
             },
             'user': {
                 'required': False,
                 'read_only':True,
             }
         }
-
+    
+    def create(self, validated_data):
+        req = validated_data.pop('user')
+        email =  req['email']
+        name =  req['name']
+        company = validated_data.get('company', None)
+        if company is None:
+            raise serializers.ValidationError('Company is required')
+        user = User(
+            email=email,
+            name=name,
+            username=generate_unique_username([
+                email,
+                name,
+                'authuser'
+            ])
+        )
+        passo = User.objects.make_random_password()
+        user.set_password(passo)
+        user.save()
+        print('saved')
+        print(passo)
+        authuser = AuthorizedUsers.objects.create(user=user,company=company)
+        return authuser
 
 class AccessCoordinatorSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name')
@@ -60,13 +82,36 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
-                'read_only':True,
             },
             'user': {
                 'required': False,
                 'read_only':True,
             }
         }
+
+        
+    def create(self, validated_data):
+        req = validated_data.pop('user')
+        email = req['email']
+        name = req['name']
+        company = validated_data.get('company', None)
+        if company is None:
+            raise serializers.ValidationError('Company is required')
+        user = User(
+            email=email,
+            name=name,
+            username=generate_unique_username([
+                email,
+                name,
+                'authuser'
+            ])
+        )
+        passo = User.objects.make_random_password()
+        user.set_password(passo)
+        user.save()
+        print(passo)
+        accessuser = AccessCoordinator.objects.create(user=user,company=company)
+        return accessuser
 
 class EmployeeSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name')
@@ -90,16 +135,43 @@ class EmployeeSerializer(serializers.ModelSerializer):
             }
         }
 
+        
+        
+    def create(self, validated_data):
+        req = validated_data.pop('user')
+        email = req['email']
+        name = req['name']
+        company = validated_data.get('company', None)
+        if company is None:
+            raise serializers.ValidationError('Company is required')
+        user = User(
+            email=email,
+            name=name,
+            username=generate_unique_username([
+                email,
+                name,
+                'authuser'
+            ])
+        )
+        passo = User.objects.make_random_password()
+        user.set_password(passo)
+        user.save()
+        print(passo)
+        accessuser = AccessCoordinator.objects.create(user=user,company=company)
+        return accessuser
+
 class NotificationSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='user.name')
+    #name = serializers.CharField(source='user.name')
     
     class Meta:
         model = Notification
-        fields = ['id', 'name', 'title','user','read','date_created','date_updated']
+        fields = ['id', 'title','user','read','date_created','date_updated']
         extra_kwargs = {
-            'name': {
+            '''name': {
+                'required':False,
                 'read_only': True,
-            },
+                'allow_blank':True
+            },'''
             'read': {
                 'required': False,
             },
@@ -166,6 +238,10 @@ class SignupSerializer(serializers.ModelSerializer):
         access_coordinator=validated_data.pop('accesscoordinator_set')
         authorized_user = validated_data.pop('authorizedusers_set')
         company = Company.objects.create(**validated_data)
+        Notification.objects.create(
+            title='Firm account created for {0}, OFAC is {1}'.format(validated_data.get('name',''),validated_data.get('account_number','')),
+            read=False
+        )
         
 
         for i in access_coordinator:
