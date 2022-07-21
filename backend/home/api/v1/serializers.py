@@ -7,7 +7,7 @@ from allauth.utils import email_address_exists, generate_unique_username
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from home.models import Company
-from users.models import AccessCoordinator, AuthorizedUsers
+from users.models import AccessCoordinator, AuthorizedUsers, Employee, Notification
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
 from django.db import models
@@ -21,7 +21,7 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     class Meta:
         model = AuthorizedUsers
-        fields = ['id', 'email', 'name', 'company']
+        fields = ['id', 'email', 'name', 'company','user']
         extra_kwargs = {
             'name': {
                 'required': True,
@@ -44,7 +44,7 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = AccessCoordinator
-        fields = ['id', 'email', 'name', 'company']
+        fields = ['id', 'email', 'name', 'company','user']
         extra_kwargs = {
             'name': {
                 'required': True,
@@ -60,11 +60,52 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             }
         }
 
+class EmployeeSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name')
+    email = serializers.EmailField(source='user.email')
+    
+    class Meta:
+        model = Employee
+        fields = ['id', 'email', 'name', 'title','sector','phone','user']
+        extra_kwargs = {
+            'name': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'email': {
+                'required': True,
+                'allow_blank': False,
+            }
+        }
+
+class NotificationSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name')
+    
+    class Meta:
+        model = Notification
+        fields = ['id', 'name', 'title','user','read','date_created','date_updated']
+        extra_kwargs = {
+            'name': {
+                'required': True,
+                'allow_blank': False,
+            },
+            'read': {
+                'required': False,
+            },
+            'date_creted': {
+                'read_only': True,
+            },
+            'date_updated': {
+                'read_only': True,
+                
+            }
+        }
+
 
 class UserSerializer(serializers.ModelSerializer):
     authorized_user = AuthorizedUserSerializer(allow_null=True)
     access_coordinator = AccessCoordinatorSerializer(allow_null=True)
-
+    employee = EmployeeSerializer(allow_null=True)
     class Meta:
         model = User
         fields = ['id', 'email', 'name', 'authorized_user', 'access_coordinator']

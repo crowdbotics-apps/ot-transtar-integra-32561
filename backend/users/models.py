@@ -34,3 +34,15 @@ class AuthorizedUsers(models.Model):
 class AccessCoordinator(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     company = models.ForeignKey(to=Company,on_delete=models.CASCADE)
+class Employee(models.Model):
+    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    phone = models.CharField(_("phone number"), blank=True, null=True, max_length=255)
+    title = models.CharField(_("title"), blank=True, null=True, max_length=255)
+    sector = models.CharField(_("sector"), blank=True, null=True, max_length=255)
+
+class Notification(models.Model):
+    title = models.CharField(max_length=255,blank=False,null=False)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_created=True,auto_now_add=True)
+    date_updated = models.DateTimeField(auto_created=True, auto_now=True)

@@ -9,9 +9,14 @@ from rest_framework import permissions, filters
 from rest_auth.serializers import LoginSerializer
 
 from home.api.v1.serializers import (
+    AccessCoordinatorSerializer,
+    AuthorizedUserSerializer,
+    EmployeeSerializer,
+    NotificationSerializer,
     SignupSerializer,
     UserSerializer,
 )
+from users.models import AccessCoordinator, AuthorizedUsers, Employee, Notification
 
 
 class SignupViewSet(ModelViewSet):
@@ -41,3 +46,44 @@ class LoginViewSet(ViewSet):
         token, created = Token.objects.get_or_create(user=user)
         user_serializer = UserSerializer(user)
         return Response({"token": token.key, "user": user_serializer.data})
+
+
+class AuthorizedUserViewSet(ModelViewSet):
+    queryset= AuthorizedUsers.objects.all()
+    serializer_class = AuthorizedUserSerializer
+    http_method_names = ["post","get","patch","delete"]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','email']
+
+
+
+
+class AccessCoordinatorViewSet(ModelViewSet):
+    queryset= AccessCoordinator.objects.all()
+    serializer_class = AccessCoordinatorSerializer
+    http_method_names = ["post","get","patch","delete"]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','email']
+
+
+
+class EmployeeViewSet(ModelViewSet):
+    queryset= Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    http_method_names = ["post","get","patch","delete"]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','email']
+
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permissions_classes = [permissions.IsAdminUser]
+        return [permission() for permission in self.permissions_classes]
+
+
+class NotificationViewSet(ModelViewSet):
+    queryset= Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAdminUser]
+    http_method_names = ["get","patch"]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title','name','date_created','date_updated']
