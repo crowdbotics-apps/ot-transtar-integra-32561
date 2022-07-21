@@ -11,6 +11,7 @@ from users.models import AccessCoordinator, AuthorizedUsers, Employee, Notificat
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
 from django.db import models
+from django.core.mail import send_mail
 
 
 User = get_user_model()
@@ -62,6 +63,8 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
         print('saved')
         print(passo)
         authuser = AuthorizedUsers.objects.create(user=user,company=company)
+        if passo is not None:
+            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
         return authuser
 
 class AccessCoordinatorSerializer(serializers.ModelSerializer):
@@ -111,6 +114,8 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
         user.save()
         print(passo)
         accessuser = AccessCoordinator.objects.create(user=user,company=company)
+        if passo is not None:
+            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
         return accessuser
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -158,6 +163,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.save()
         print(passo)
         employee = Employee.objects.create(user=user,**validated_data)
+        if passo is not None:
+            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
         return employee
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -246,6 +253,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
         for i in access_coordinator:
             user=None
+            passo=None
             try:
                 user = User.objects.get(email=i['user']['email'])
             except User.DoesNotExist:
@@ -261,11 +269,14 @@ class SignupSerializer(serializers.ModelSerializer):
                 user.set_password('password')
                 user.save()
             accessuser = AccessCoordinator.objects.create(user=user,company=company)
+            if passo is not None:
+                send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
                 #accessuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
 
         for i in authorized_user:
+            passo=None
             user=None
             try:
                 user = User.objects.get(email=i['user']['email'])
@@ -279,11 +290,13 @@ class SignupSerializer(serializers.ModelSerializer):
                         'authuser'
                     ])
                 )
-                #passo = User.objects.make_random_password()
-                user.set_password('password')
+                passo = User.objects.make_random_password()
+                user.set_password(passo)
                 user.save()
                 print('saved')
             authuser = AuthorizedUsers.objects.create(user=user,company=company)
+            if passo is not None:
+                send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
                 #authuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
@@ -291,6 +304,16 @@ class SignupSerializer(serializers.ModelSerializer):
             #serialized = SignupSerializer(instance=new_company)
             #print(new_company)
         return company
+
+
+    def update(self,instance,validated_data):
+        data = super().update(instance, validated_data)
+        if validated_data.get('account_number',None) is not None:
+            Notification.objects.create(
+                title='Firm account updated for {0}, OFAC is {1}'.format(instance['name'],validated_data.get('account_number','')),
+                read=False
+            )
+        return data
 
     def save(self, request=None):
         """rest_auth passes request so we must override to accept it"""
