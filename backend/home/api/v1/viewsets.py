@@ -25,12 +25,12 @@ class SignupViewSet(ModelViewSet):
     http_method_names = ["post","get","patch","delete"]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name','street_address','street_address_two','city','state','postal','account_number']
-
+'''
     def get_permissions(self):
         if self.action == 'list':
             self.permissions_classes = [permissions.IsAdminUser]
         return [permission() for permission in self.permissions_classes]
-
+'''
 
 class LoginViewSet(ViewSet):
     """Based on rest_framework.authtoken.views.ObtainAuthToken"""

@@ -30,15 +30,22 @@ class User(AbstractUser):
 class AuthorizedUsers(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     company = models.ForeignKey(to=Company,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.user.name
 
 class AccessCoordinator(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     company = models.ForeignKey(to=Company,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.user.name
 class Employee(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     phone = models.CharField(_("phone number"), blank=True, null=True, max_length=255)
     title = models.CharField(_("title"), blank=True, null=True, max_length=255)
     sector = models.CharField(_("sector"), blank=True, null=True, max_length=255)
+    
+    def __str__(self):
+        return self.user.name
 
 class Notification(models.Model):
     title = models.CharField(max_length=255,blank=False,null=False)
