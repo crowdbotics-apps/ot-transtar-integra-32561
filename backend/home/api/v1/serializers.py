@@ -141,24 +141,24 @@ class EmployeeSerializer(serializers.ModelSerializer):
         req = validated_data.pop('user')
         email = req['email']
         name = req['name']
-        company = validated_data.get('company', None)
-        if company is None:
-            raise serializers.ValidationError('Company is required')
+        
         user = User(
             email=email,
             name=name,
             username=generate_unique_username([
                 email,
                 name,
-                'authuser'
-            ])
+                'employee'
+            ]),
+            is_staff=True
         )
+        
         passo = User.objects.make_random_password()
         user.set_password(passo)
         user.save()
         print(passo)
-        accessuser = AccessCoordinator.objects.create(user=user,company=company)
-        return accessuser
+        employee = Employee.objects.create(user=user,**validated_data)
+        return employee
 
 class NotificationSerializer(serializers.ModelSerializer):
     #name = serializers.CharField(source='user.name')
