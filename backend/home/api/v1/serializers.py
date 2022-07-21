@@ -114,12 +114,12 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    authorized_user = AuthorizedUserSerializer(allow_null=True,read_only=True)
-    access_coordinator = AccessCoordinatorSerializer(allow_null=True,read_only=True)
-    employee = EmployeeSerializer(allow_null=True,read_only=True)
+    authorizedusers = AuthorizedUserSerializer(read_only=True)
+    accesscoordinator = AccessCoordinatorSerializer(read_only=True)
+    employee = EmployeeSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'authorized_user', 'access_coordinator', 'employee']
+        fields = ['id', 'email', 'name', 'authorizedusers', 'accesscoordinator', 'employee']
         extra_kwargs ={
             'id':{
                 'required':False
