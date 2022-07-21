@@ -4,6 +4,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import permissions, filters
 
 from rest_auth.serializers import LoginSerializer
 
@@ -17,6 +18,13 @@ class SignupViewSet(ModelViewSet):
     queryset= Company.objects.all()
     serializer_class = SignupSerializer
     http_method_names = ["post","get","patch","delete"]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name','street_address','street_address_two','city','state','postal','account_number']
+
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permissions_classes = [permissions.IsAdminUser]
+        return [permission() for permission in self.permissions_classes]
 
 
 class LoginViewSet(ViewSet):
