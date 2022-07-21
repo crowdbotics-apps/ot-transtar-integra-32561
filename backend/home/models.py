@@ -1,5 +1,9 @@
+from turtle import title
 from django.db import models
 #from users.models import AccessCoordinator, AuthorizedUsers
+#from django.contrib.auth import get_user_model
+
+#User = get_user_model()
 class Company(models.Model):
     name = models.CharField(max_length=255,blank=False,null=False)
     account_number = models.CharField(max_length=255,blank=False,null=False)
