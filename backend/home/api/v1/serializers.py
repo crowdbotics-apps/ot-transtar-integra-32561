@@ -16,16 +16,6 @@ from django.db import models
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'name']
-        extra_kwargs ={
-            'id':{
-                'required':False
-            }
-        }
-
 class AuthorizedUserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name')
     email = serializers.EmailField(source='user.email')
@@ -70,6 +60,19 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             }
         }
 
+
+class UserSerializer(serializers.ModelSerializer):
+    authorized_user = AuthorizedUserSerializer(allow_null=True)
+    access_coordinator = AccessCoordinatorSerializer(allow_null=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'name', 'authorized_user', 'access_coordinator']
+        extra_kwargs ={
+            'id':{
+                'required':False
+            }
+        }
 
 class SignupSerializer(serializers.ModelSerializer):
     accesscoordinator_set = AccessCoordinatorSerializer(many=True)
