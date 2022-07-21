@@ -34,6 +34,10 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
             'company': {
                 'required': False,
                 'read_only':True,
+            },
+            'user': {
+                'required': False,
+                'read_only':True,
             }
         }
 
@@ -57,6 +61,10 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
             'company': {
                 'required': False,
                 'read_only':True,
+            },
+            'user': {
+                'required': False,
+                'read_only':True,
             }
         }
 
@@ -75,6 +83,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'email': {
                 'required': True,
                 'allow_blank': False,
+            },
+            'user': {
+                'required': False,
+                'read_only':True,
             }
         }
 
@@ -86,8 +98,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'title','user','read','date_created','date_updated']
         extra_kwargs = {
             'name': {
-                'required': True,
-                'allow_blank': False,
+                'read_only': True,
             },
             'read': {
                 'required': False,
@@ -103,12 +114,12 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    authorized_user = AuthorizedUserSerializer(allow_null=True)
-    access_coordinator = AccessCoordinatorSerializer(allow_null=True)
-    employee = EmployeeSerializer(allow_null=True)
+    authorizedusers = AuthorizedUserSerializer(read_only=True)
+    accesscoordinator = AccessCoordinatorSerializer(read_only=True)
+    employee = EmployeeSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'authorized_user', 'access_coordinator']
+        fields = ['id', 'email', 'name', 'authorizedusers', 'accesscoordinator', 'employee']
         extra_kwargs ={
             'id':{
                 'required':False
