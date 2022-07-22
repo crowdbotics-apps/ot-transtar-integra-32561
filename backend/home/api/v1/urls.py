@@ -1,5 +1,5 @@
 from http.client import HTTPResponse
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from django.http import JsonResponse
 #from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
@@ -76,4 +76,5 @@ urlpatterns = [
     path("verify_cert",get_cert,name='verify_cert'),
     path("verify_drs",get_drs,name='verify_drs'),
     path("verify_client",verify_client,name='verify_client'),
+    re_path(r'^password-reset/', include('django_rest_passwordreset.urls',namespace='password_reset')),
 ]

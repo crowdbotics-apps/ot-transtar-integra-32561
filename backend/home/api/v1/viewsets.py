@@ -4,7 +4,11 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import permissions, filters
+from rest_framework import permissions, filters, renderers
+from base64 import b64encode
+from django.dispatch import receiver
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail
 
 from rest_auth.serializers import LoginSerializer
 
@@ -88,3 +92,27 @@ class NotificationViewSet(ModelViewSet):
     http_method_names = ["get","patch"]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title','name','date_created','date_updated']
+
+
+
+@receiver(reset_password_token_created)
+def password_reset(sender, instance, reset_password_token, *args, **kwargs):
+    print(reset_password_token.user.is_staff)
+    usertype = 'broker'
+    if reset_password_token.user.is_staff:
+        usertype='admin'
+
+    name = reset_password_token.user.name
+    if name is None:
+        name = ''
+    send_mail('Password Reset', 'Hi {0} \n\nyou\'ve reseted your password, kindly visit this link to change your password  https://ot-transtar-integra-32561.botics.co/{2}/resetpassword?signal={1}'.format(
+        name,
+        b64encode(
+            renderers.JSONRenderer().render(
+                data={'token':reset_password_token.key}
+            )
+        ).decode('utf-8'),
+        usertype
+    ), from_email='lscotland@odysseytrust.com', recipient_list=[reset_password_token.user.email])
+
+

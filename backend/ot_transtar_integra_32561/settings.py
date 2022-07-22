@@ -66,6 +66,7 @@ THIRD_PARTY_APPS = [
     'drf_yasg',
     'storages',
     'django_mailjet',
+    'django_rest_passwordreset',
 ]
 MODULES_APPS = get_modules()
 
