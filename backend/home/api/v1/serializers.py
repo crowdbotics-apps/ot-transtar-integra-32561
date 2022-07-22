@@ -1,14 +1,13 @@
+from base64 import b64encode
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.utils.translation import ugettext_lazy as _
 from allauth.account import app_settings as allauth_settings
 from allauth.account.forms import ResetPasswordForm
 from allauth.utils import email_address_exists, generate_unique_username
-from allauth.account.adapter import get_adapter
-from allauth.account.utils import setup_user_email
 from home.models import Company
 from users.models import AccessCoordinator, AuthorizedUsers, Employee, Notification
-from rest_framework import serializers
+from rest_framework import serializers, renderers
 from rest_auth.serializers import PasswordResetSerializer
 from django.db import models
 from django.core.mail import send_mail
@@ -16,6 +15,27 @@ from django.core.mail import send_mail
 
 User = get_user_model()
 
+def password_message(user, password, send_link=True):
+    data = [
+        "Hi {0},\n here is you auto generated password : {1} \n".format(user.name,password),
+        "please endeavour to change it"
+    ]
+
+    if send_link is True:
+        usertype = 'broker'
+        if user.is_staff:
+            usertype='admin'
+        data.append("\n or use link ")
+        data.append("https://ot-transtar-integra-32561.botics.co/{0}/login?verified={1}".format(
+            usertype,
+            b64encode(
+                renderers.JSONRenderer().render(
+                    data={'email':user.email,'password':password}
+                )
+            ).decode('utf-8')
+        ))
+    print(data)
+    return data
 
 class AuthorizedUserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name')
@@ -34,6 +54,7 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
             },
             'company': {
                 'required': False,
+                
             },
             'user': {
                 'required': False,
@@ -47,7 +68,7 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
         name =  req['name']
         company = validated_data.get('company', None)
         if company is None:
-            raise serializers.ValidationError('Company is required')
+            raise serializers.ValidationError({'detail':'Company is required','status':'error'})
         user = User(
             email=email,
             name=name,
@@ -63,8 +84,14 @@ class AuthorizedUserSerializer(serializers.ModelSerializer):
         print('saved')
         print(passo)
         authuser = AuthorizedUsers.objects.create(user=user,company=company)
+        
         if passo is not None:
-            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
+            mail = password_message(user,passo)
+            send_mail('Welcome',
+                "".join(mail),
+                from_email='lscotland@odysseytrust.com',
+                recipient_list=[user.email]
+            )
         return authuser
 
 class AccessCoordinatorSerializer(serializers.ModelSerializer):
@@ -99,7 +126,7 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
         name = req['name']
         company = validated_data.get('company', None)
         if company is None:
-            raise serializers.ValidationError('Company is required')
+            raise serializers.ValidationError({'detail':'Company is required','status':'error'})
         user = User(
             email=email,
             name=name,
@@ -114,8 +141,14 @@ class AccessCoordinatorSerializer(serializers.ModelSerializer):
         user.save()
         print(passo)
         accessuser = AccessCoordinator.objects.create(user=user,company=company)
+        
         if passo is not None:
-            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
+            mail = password_message(user,passo)
+            send_mail('Welcome', 
+                "".join(mail),
+                from_email='lscotland@odysseytrust.com',
+                recipient_list=[user.email]
+            )
         return accessuser
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -163,8 +196,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.save()
         print(passo)
         employee = Employee.objects.create(user=user,**validated_data)
+        
         if passo is not None:
-            send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
+            mail = password_message(user,passo)
+            send_mail(
+                "".join(mail),
+                from_email='lscotland@odysseytrust.com',
+                recipient_list=[user.email]
+            )
         return employee
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -231,14 +270,23 @@ class SignupSerializer(serializers.ModelSerializer):
                 'required': True,
                 'allow_blank': False,
             },
-            'accesscoordinators_set':{
+            'accesscoordinator_set':{
                 'allow_blank': True,
                 'required': False,
-
+                'fields':{
+                    'company':{
+                        'required':False
+                    }
+                }
             },
             'authorizedusers_set':{
                 'allow_blank': True,
-                'required': False
+                'required': False,
+                'fields':{
+                    'company':{
+                        'required':False
+                    }
+                }
             }
         }
     def create(self, validated_data):
@@ -246,7 +294,7 @@ class SignupSerializer(serializers.ModelSerializer):
         authorized_user = validated_data.pop('authorizedusers_set')
         company = Company.objects.create(**validated_data)
         Notification.objects.create(
-            title='Firm account created for {0}, OFAC is {1}'.format(validated_data.get('name',''),validated_data.get('account_number','')),
+            title='Firm account created for {0}, with OFAC {1}'.format(validated_data.get('name',''),validated_data.get('account_number','')),
             read=False
         )
         
@@ -266,11 +314,20 @@ class SignupSerializer(serializers.ModelSerializer):
                         'accessuser'
                     ])
                 )
-                user.set_password('password')
+                passo = User.objects.make_random_password()
+                user.set_password(passo)
                 user.save()
             accessuser = AccessCoordinator.objects.create(user=user,company=company)
+            
             if passo is not None:
-                send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
+                print(passo)
+                mail = password_message(user,passo)
+                send_mail('Welcome',
+                    "".join(mail),
+                    from_email='lscotland@odysseytrust.com',
+                    recipient_list=[user.email]
+                )
+                #send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
                 #accessuser.save()
             #request = self._get_request()
             #setup_user_email(request, user, [])
@@ -296,13 +353,13 @@ class SignupSerializer(serializers.ModelSerializer):
                 print('saved')
             authuser = AuthorizedUsers.objects.create(user=user,company=company)
             if passo is not None:
-                send_mail('Welcome', "Hi {0}, \n here is you auto generated password : {1} \n please endeavour to change it".format(user.name,passo), from_email='lscotland@odysseytrust.com', recipient_list=[user.email])
-                #authuser.save()
-            #request = self._get_request()
-            #setup_user_email(request, user, [])
-            #new_company = Company.objects.get(pk=company.id)
-            #serialized = SignupSerializer(instance=new_company)
-            #print(new_company)
+                mail = password_message(user,passo)
+                send_mail('Welcome',
+                    "".join(mail),
+                    from_email='lscotland@odysseytrust.com',
+                    recipient_list=[user.email]
+                )
+                
         return company
 
 
@@ -310,7 +367,7 @@ class SignupSerializer(serializers.ModelSerializer):
         data = super().update(instance, validated_data)
         if validated_data.get('account_number',None) is not None:
             Notification.objects.create(
-                title='Firm account updated for {0}, OFAC is {1}'.format(instance['name'],validated_data.get('account_number','')),
+                title='Firm billing address for {0}  updated.'.format(instance['name']),
                 read=False
             )
         return data
