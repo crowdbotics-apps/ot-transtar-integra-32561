@@ -1,0 +1,1 @@
+import{e as s,r as a,f as n,a as e,m as r}from"./index.2aedf6a5.js";const d=g=>{const o=s(),{isLoggedIn:i,setIsLoggedIn:t}=a.exports.useContext(n);return e("div",{children:e(r,{open:!0,closeModal:()=>o(-1),onConfirm:()=>{o("/login"),t(!1)}})})};export{d as default};
