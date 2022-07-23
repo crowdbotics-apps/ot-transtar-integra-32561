@@ -71,16 +71,17 @@ def verify_client(request):
         }
     })
 
-
+@api_view(['GET'])
 def create_admin(request):
     User = get_user_model(); 
     User.objects.create_superuser('admin', 'ezekiel.okoduwa@crowdbotics.com', 'password')
+    return JsonResponse(data={'status':'ok'})
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("verify_cert",get_cert,name='verify_cert'),
-    path("verify_drs",get_drs,name='verify_drs'),
-    path("verify_client",verify_client,name='verify_client'),
-    path("create_admin",create_admin,name='create_admin'),
+    path("verify_cert/",get_cert,name='verify_cert'),
+    path("verify_drs/",get_drs,name='verify_drs'),
+    path("verify_client/",verify_client,name='verify_client'),
+    path("create_admin/",create_admin,name='create_admin'),
     re_path(r'^password-reset/', include('django_rest_passwordreset.urls',namespace='password_reset')),
 ]
