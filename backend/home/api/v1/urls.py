@@ -5,7 +5,7 @@ from django.http import JsonResponse
 #from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import response, schemas
-
+from django.contrib.auth import get_user_model; 
 from home.api.v1.viewsets import (
     AccessCoordinatorViewSet,
     AuthorizedUserViewSet,
@@ -70,11 +70,17 @@ def verify_client(request):
             'reg_line_two':'..'
         }
     })
-    
+
+
+def create_admin(request):
+    User = get_user_model(); 
+    User.objects.create_superuser('admin', 'ezekiel.okoduwa@crowdbotics.com', 'password')
+
 urlpatterns = [
     path("", include(router.urls)),
     path("verify_cert",get_cert,name='verify_cert'),
     path("verify_drs",get_drs,name='verify_drs'),
     path("verify_client",verify_client,name='verify_client'),
+    path("create_admin",create_admin,name='create_admin'),
     re_path(r'^password-reset/', include('django_rest_passwordreset.urls',namespace='password_reset')),
 ]
