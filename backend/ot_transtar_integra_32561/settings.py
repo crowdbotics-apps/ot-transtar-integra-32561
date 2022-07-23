@@ -65,6 +65,8 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'drf_yasg',
     'storages',
+    'django_mailjet',
+    'django_rest_passwordreset',
 ]
 MODULES_APPS = get_modules()
 
@@ -188,12 +190,17 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 # Custom user model
 AUTH_USER_MODEL = "users.User"
-
+"""
 EMAIL_HOST = env.str("EMAIL_HOST", "smtp.sendgrid.net")
 EMAIL_HOST_USER = env.str("SENDGRID_USERNAME", "")
 EMAIL_HOST_PASSWORD = env.str("SENDGRID_PASSWORD", "")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+"""
+EMAIL_BACKEND = 'django_mailjet.backends.MailjetBackend'
+MAILJET_API_KEY='1d5a609d0c0a27e9455f13016e5b8692'
+MAILJET_API_SECRET ='02bdac7de4df06110e18ed129055801f'
+
 
 
 # AWS S3 config
@@ -225,9 +232,10 @@ if USE_S3:
 SWAGGER_SETTINGS = {
     "DEFAULT_INFO": f"{ROOT_URLCONF}.api_info",
 }
-
+"""
 if DEBUG or not (EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
     # output email to console instead of sending
     if not DEBUG:
         logging.warning("You should setup `SENDGRID_USERNAME` and `SENDGRID_PASSWORD` env vars to send emails.")
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+"""

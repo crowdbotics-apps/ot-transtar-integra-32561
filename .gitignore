@@ -57,3 +57,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+backend/dba.sqlite3
+backend/db.sqlite3
