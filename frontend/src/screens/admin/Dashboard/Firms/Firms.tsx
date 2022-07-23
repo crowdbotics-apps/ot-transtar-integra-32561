@@ -26,20 +26,21 @@ const Firms = (props: Props) => {
   const selectedFirm = firms.find(d => d.id === selectedFirmId)!
   const [loading, setLoading] = useState(false)
   useEffect(() => {
-    setLoading(true);
     (async () => {
+      setLoading(true);
       const data = await Api.get('company/');
-      const firmData: (Data & { id: number })[] = data.map((d: FirmData) => ({
-        firmDetails: { name: d.name, account_number: d.account_number },
-        billingInfo: { country: d.country, state: d.state, city: d.city, postal: d.postal, street_address: d.street_address, street_address_two: d.street_address_two },
-        accessCoordinatorInfo: d.accesscoordinator_set,
-        authorizedUserInfo: d.authorizedusers_set,
-        id: d.id
-      })).reverse()
-      setFirms(firmData);
-      setFilteredFirms(firmData);
+      if (data && data.length) {
+        const firmData: (Data & { id: number })[] = data?.map((d: FirmData) => ({
+          firmDetails: { name: d.name, account_number: d.account_number },
+          billingInfo: { country: d.country, state: d.state, city: d.city, postal: d.postal, street_address: d.street_address, street_address_two: d.street_address_two },
+          accessCoordinatorInfo: d.accesscoordinator_set,
+          authorizedUserInfo: d.authorizedusers_set,
+          id: d.id
+        })).reverse()
+        setFirms(firmData);
+        setFilteredFirms(firmData);
+      }
       setLoading(false)
-
     })()
   }, [])
 

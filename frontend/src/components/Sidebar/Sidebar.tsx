@@ -226,7 +226,7 @@ const Sidebar = ({ links }) => {
       >
         {links.map(route => (
           <NavLink
-            to={`/dashboard/${route.path}`}
+            to={`${route.path}`}
             style={({ isActive }) => ({
               color: isActive ? "#fff" : "#0E294B",
               backgroundColor: !isActive ? "#fff" : "#0E294B"

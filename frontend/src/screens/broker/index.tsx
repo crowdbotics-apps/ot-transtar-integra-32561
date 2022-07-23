@@ -1,9 +1,11 @@
-export { default as Registration } from "./Registration/RegistrationScreen"
-export { default as Login } from "./Login/Login"
-export { default as ChangePassword } from "./ChangePassword/ChangePassword"
-export { default as PasswordReset } from "./PasswordReset/PasswordReset"
-export * from "./Dashboard/Dashboard"
-export { default as FirmUsers } from "./Dashboard/FirmUsers/FirmUsers"
-export { default as VerifyDRS } from "./Dashboard/VerifyDRS/VerifyDRS"
-export { default as VerifyCertificate } from "./Dashboard/VerifyCertificate/VerifyCertificate"
-export { default as Logout } from "./Dashboard/Logout/Logout"
+import { lazy } from 'react'
+
+export const Registration = lazy(() => import('./Registration/RegistrationScreen'))
+export const Login = lazy(() => import('./Login/Login'))
+export const ChangePassword = lazy(() => import('./ChangePassword/ChangePassword'))
+export const PasswordReset = lazy(() => import('./PasswordReset/PasswordReset'))
+export const Home = lazy(() => import('./Dashboard/Dashboard'))
+export const FirmUsers = lazy(() => import('./Dashboard/FirmUsers/FirmUsers'))
+export const VerifyDRS = lazy(() => import('./Dashboard/VerifyDRS/VerifyDRS'))
+export const VerifyCertificate = lazy(() => import('./Dashboard/VerifyCertificate/VerifyCertificate'))
+export const Logout = lazy(() => import('./Dashboard/Logout/Logout'))

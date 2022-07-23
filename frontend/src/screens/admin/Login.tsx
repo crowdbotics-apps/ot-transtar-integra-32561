@@ -1,15 +1,25 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import {
   Wrapper,
   Overlay
 } from "../client/Verification/VerificationScreen.style"
-import LoginForm from "../../components/Forms/common/Login.form"
+import LoginForm from "components/Forms/common/Login.form"
 import { useStyletron } from "baseui"
-import { StyledHeaderText, StyledParagraphText } from "../../components"
+import { StyledHeaderText, StyledParagraphText } from "components"
+import { useContext, useState, MouseEvent } from "react"
+import Api from "Api"
+import { AuthContext } from "context/AuthContext"
+import queryString from 'query-string'
 
 const LoginScreen = () => {
   const [css] = useStyletron()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { email, password } = queryString.parse(location.search) as { email: string, password: string }
+  const { setIsLoggedIn } = useContext(AuthContext)
+  const [loading, setLoading] = useState(false)
+
   return (
     <Wrapper>
       <Overlay />
@@ -28,7 +38,20 @@ const LoginScreen = () => {
         </div>
       </div>
       <div className={css({ flex: 1, zIndex: 1, alignSelf: "center" })}>
-        <LoginForm onSubmit={() => navigate("/dashboard")} />
+        <LoginForm
+          onSubmit={async (e: MouseEvent<HTMLButtonElement>, data: any) => {
+            setLoading(true)
+            e.preventDefault();
+            const res = await Api.create('login/', data);
+            setLoading(false)
+            if (res) {
+              setIsLoggedIn(true)
+              navigate("/admin/dashboard")
+            }
+          }}
+          loading={loading}
+          defaultData={{ email, password }}
+        />
       </div>
     </Wrapper>
   )

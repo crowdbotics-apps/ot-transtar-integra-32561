@@ -47,13 +47,13 @@ const FirmUsers = (props: Props) => {
           small
           style={{
             width: 160,
-            background: "#fff",
-            color: "#B4873F",
+            background: isEditable ? "#B4873F" : "#fff",
+            color: isEditable ? "#fff" : "#B4873F",
             border: "1px solid #B4873F"
           }}
-          onClick={_ => setIsEditable(true)}
+          onClick={_ => setIsEditable(!isEditable)}
         >
-          EDIT
+          {isEditable ? 'SAVE' : 'EDIT'}
         </StyledButton>
       </div>
       <RegistrationForm

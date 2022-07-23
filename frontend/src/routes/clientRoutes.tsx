@@ -1,3 +1,4 @@
+import Footer from "components/Footer/Footer";
 import { Routes, Route, Navigate, useRoutes } from "react-router-dom";
 import { VerficationScreen, LoginScreen } from "../screens/client";
 export const clientRoutes = [
@@ -6,5 +7,9 @@ export const clientRoutes = [
 ];
 
 export default () => {
-  return useRoutes(clientRoutes);
+  return <>
+    {useRoutes(clientRoutes)}
+    <Footer />
+
+  </>
 };

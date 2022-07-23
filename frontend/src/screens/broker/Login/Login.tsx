@@ -40,7 +40,7 @@ const LoginScreen = () => {
             setLoading(false)
             if (res) {
               setIsLoggedIn(true)
-              navigate("/dashboard")
+              navigate("/broker/dashboard")
             }
           }}
           loading={loading}

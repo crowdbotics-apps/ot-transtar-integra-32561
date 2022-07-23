@@ -5,7 +5,7 @@ import { StyledHeaderText } from "../../../components"
 import { useRoutes, Routes, Route, Outlet } from "react-router-dom"
 type Props = {}
 
-export const Home = (props: Props) => {
+const Home = (props: Props) => {
   const [css] = useStyletron()
   return (
     <div style={{ height: "100vh", position: "relative", width: '100vw' }}>
@@ -48,3 +48,4 @@ export const Home = (props: Props) => {
     </div>
   )
 }
+export default Home
