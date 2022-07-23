@@ -237,7 +237,7 @@ class UserSerializer(serializers.ModelSerializer):
     employee = EmployeeSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'authorizedusers', 'accesscoordinator', 'employee']
+        fields = ['id', 'email', 'name', 'authorizedusers', 'accesscoordinator', 'employee', 'is_superuser']
         extra_kwargs ={
             'id':{
                 'required':False
